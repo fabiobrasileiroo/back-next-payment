@@ -1,10 +1,12 @@
 import * as productService from '../services/productService';
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
+import type { Product } from '../@types/productTypes';
 
 export const createProduct = async (req: Request, res: Response) => {
   try {
-    const product = await productService.createProduct(req.body);
-    res.status(201).json(product);
+    const product: Product = req.body;
+    const createdProduct = await productService.createProduct(product);
+    res.status(201).json(createdProduct);
   } catch (error) {
     res.status(500).json({ message: (error as Error).message });
   }
