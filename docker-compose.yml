@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: node_app-api-gateway
+    environment:
+      - DATABASE_URL=postgresql://api-gateway_owner:YgkAcWHq3y1K@ep-weathered-leaf-a59m40bj.us-east-2.aws.neon.tech/api-gateway?sslmode=require
+      - PORT=3000
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/usr/src/app
+    command: ["npm", "start"]

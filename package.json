@@ -1,0 +1,29 @@
+{
+  "name": "back-next-payment",
+  "version": "1.0.0",
+  "description": "api gateway ",
+  "main": "src/server.js",
+  "type": "module",
+  "engines": {
+    "node": ">= 22"
+  },
+  "scripts": {
+    "dev": "node --watch src/server.js",
+    "lint:format": "npx @biomejs/biome format --write ./",
+    "lint": "npx @biomejs/biome lint --write ./",
+    "lint:check": "npx @biomejs/biome check --write ./"
+  },
+  "keywords": ["api","api gateway"],
+  "author": "fabio",
+  "license": "MIT",
+  "dependencies": {
+    "@biomejs/biome": "1.9.0",
+    "dotenv": "^16.4.5",
+    "prisma": "^5.19.1",
+    "express": "^4.21.0",
+    "mercadopago": "^2.0.15"
+  },
+  "devDependencies": {
+    "@prisma/client": "^5.19.1"
+  }
+}
