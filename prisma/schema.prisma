@@ -14,8 +14,37 @@ generator client {
 }
 
 model Product {
-  id          Int     @id @default(autoincrement())
+  id          Int      @id @default(autoincrement())
   name        String
   price       Float
   description String?
+  companyId   Int
+  company     Company  @relation(fields: [companyId], references: [id])
+}
+
+model Company {
+  id       Int       @id @default(autoincrement())
+  name     String
+  units    Unit[]
+  products Product[]
+}
+
+model Unit {
+  id       Int       @id @default(autoincrement())
+  name     String
+  company  Company   @relation(fields: [companyId], references: [id])
+  companyId Int
+}
+
+model User {
+  id       Int      @id @default(autoincrement())
+  email    String   @unique
+  name     String
+  password String
+  role     UserRole
+}
+
+enum UserRole {
+  USER
+  ADMIN
 }
