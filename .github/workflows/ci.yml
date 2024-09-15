@@ -1,0 +1,46 @@
+name: CI/CD for Linting
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  lint:
+    name: Run Linting and Formatting
+    runs-on: ubuntu-latest
+
+    steps:
+      # Check out the repository
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Set up Node.js environment
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      # Install dependencies
+      - name: Install dependencies
+        run: npm install
+
+      # Run linting
+      - name: Run lint check
+        run: npm run lint:check
+
+      # Run format check
+      - name: Run format check
+        run: npm run lint:format
+
+      # Optional: Commit changes if format check alters files
+      - name: Commit formatting changes
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git add .
+          git commit -m "Apply automatic formatting changes" || echo "No changes to commit"
+          git push || echo "No changes to push"
