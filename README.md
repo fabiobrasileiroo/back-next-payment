@@ -1,6 +1,4 @@
-<div style="width: 200px;" >
-![WhatsApp Image 2024-09-13 at 23 59 56](https://github.com/user-attachments/assets/2e67f5fb-b109-4bac-8169-8d11ad27dd1b)
-</div>
+<img src="https://github.com/user-attachments/assets/2e67f5fb-b109-4bac-8169-8d11ad27dd1b" alt="Descrição da imagem" width="200px">
 # Back
 
 
