@@ -7,7 +7,7 @@ Api gateway pdv.
 
 - [x] RF01: Implementar criação de produto.
 - [x] RF02: Implementar listagem de produtos.
-- [ ] RF03: Implementar busca de produto por ID.
+- [x] RF03: Implementar busca de produto por ID.
 - [ ] RF04: Implementar atualização de produto.
 - [ ] RF05: Implementar deleção de produto.
 - [x] RF06: Implementar pagamento via PIX.
@@ -16,9 +16,9 @@ Api gateway pdv.
 - [ ] RF09: Implementar envio de e-mail para cliente após pagamento.
 - [ ] RF10: Implementar relatório de transações.
 - [ ] RF11: Implementar relatório de produtos vendidos.
-- [ ] RF12: Implementar autenticação JWT para operações seguras.
-- [ ] RF13: Implementar registro de novos usuários.
-- [ ] RF14: Implementar controle de permissões por nível de usuário.
+- [x] RF12: Implementar autenticação JWT para operações seguras.
+- [x] RF13: Implementar registro de novos usuários.
+- [x] RF14: Implementar controle de permissões por nível de usuário.
 
 
 ## RNs (Regras de negócio)
