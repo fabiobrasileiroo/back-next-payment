@@ -18,6 +18,7 @@ model Product {
   name        String
   price       Float
   description String?
+  imageUrl    String?  // Campo opcional para o link da imagem
   companyId   Int
   company     Company  @relation(fields: [companyId], references: [id])
 }
