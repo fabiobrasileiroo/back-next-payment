@@ -11,8 +11,8 @@ Api gateway pdv.
 - [x] RF01: Implementar criação de produto.
 - [x] RF02: Implementar listagem de produtos.
 - [x] RF03: Implementar busca de produto por ID.
-- [ ] RF04: Implementar atualização de produto.
-- [ ] RF05: Implementar deleção de produto.
+- [x] RF04: Implementar atualização de produto.
+- [x] RF05: Implementar deleção de produto.
 - [x] RF06: Implementar pagamento via PIX.
 - [ ] RF07: Implementar verificação de status de pagamento.
 - [ ] RF08: Implementar funcionalidade de reembolso.
@@ -41,8 +41,8 @@ Api gateway pdv.
 ## RNFs (requisitos não-funcionais)
 > obs:  são os requisitos relacionados ao uso da aplicação em termos de desempenho, usabilidade, confiabilidade, segurança, disponibilidade, manutenção e tecnologias envolvidas. Estes requisitos dizem respeito a como as funcionalidades serão entregues ao usuário do software
 
-- [ ] RNF01: Garantir segurança dos dados (criptografia).
-- [ ] RNF02: Autenticação e autorização.
+- [x] RNF01: Garantir segurança dos dados (criptografia).
+- [x] RNF02: Autenticação e autorização.
 - [ ] RNF03: Integração fácil com outros serviços.
 
 
