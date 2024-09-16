@@ -9,7 +9,7 @@
   },
   "scripts": {
     "start:dev": "tsx watch src/server.ts",
-    "start": "node build/server.js",
+    "start": "node build/server.cjs",
     "build": "tsup src --out-dir build",
     "lint:format": "npx @biomejs/biome format --write ./",
     "lint": "npx @biomejs/biome lint --write ./",

@@ -10,9 +10,14 @@ app.use(express.json())
 
 app.use(cors())
 
+app.get('/',  (_req, res) => {
+  res.send('Api next payment funcionando')
+})
+
 // Defina as rotas para produtos e pagamentos
 app.use('/api/products', productRoutes)
 app.use('/api/payments', paymentRoutes)
 app.use('/api', authRoutes) // Adicione '/api' como prefixo para as rotas de autenticação
+
 
 export default app
