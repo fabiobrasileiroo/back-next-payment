@@ -1,15 +1,13 @@
+import 'dotenv/config'
 import type { Product } from '@/@types/productTypes'
 import type { Request, Response } from 'express'
 import * as productService from '../services/productService'
 import { uploadImage } from '../services/imgBbServices'
 import axios from 'axios'
 
-import imgbbUploader from 'imgbb-uploader'
-import fs from 'fs'
-import path from 'path'
 
+import imgbbUploader from 'imgbb-uploader'
 export const createProduct = async (req: Request, res: Response) => {
-  console.log(process.env.IMGBB_API_KEY)
   try {
     const productData: Product | any = req.body
     const base64Image: string = req.body.imageUrl // A imagem vem como base64 no corpo da requisição
