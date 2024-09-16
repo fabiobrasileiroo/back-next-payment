@@ -1,4 +1,7 @@
+<img src="https://github.com/user-attachments/assets/2e67f5fb-b109-4bac-8169-8d11ad27dd1b" alt="Descrição da imagem" width="200px">
+
 # Back
+
 
 Api gateway pdv.
 
@@ -49,3 +52,6 @@ Api gateway pdv.
 npx prisma migrate dev --name init
 
 npx prisma studio
+```
+
+Link postman: https://documenter.getpostman.com/view/31945468/2sAXqp8PEf#15cc072c-b0ba-4f55-a2f1-51399fa75dc5
