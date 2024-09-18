@@ -1,9 +1,9 @@
 import 'dotenv/config'
 import type { Product } from '@/@types/productTypes'
-import type { Request, Response } from 'express'
-import * as productService from '../services/productService'
-import { uploadImage } from '../services/imgBbServices'
 import axios from 'axios'
+import type { Request, Response } from 'express'
+import { uploadImage } from '../services/imgBbServices'
+import * as productService from '../services/productService'
 
 import imgbbUploader from 'imgbb-uploader'
 export const createProduct = async (req: Request, res: Response) => {
