@@ -5,7 +5,7 @@ export const uploadImage = async (imagePath: string) => {
   try {
     const response = await imgbbUploader({
       apiKey,
-      imagePath
+      imagePath,
     })
     return response.url
   } catch (error) {

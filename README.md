@@ -30,7 +30,7 @@ Api gateway pdv.
 - [ ] RN01: Pagamento via PIX deve ser concluído em 30 minutos.
 - [ ] RN02: Produtos com pagamentos pendentes não podem ser deletados.
 - [ ] RN03: Pagamentos só podem ser feitos para produtos com estoque disponível.
-- [ ] RN04: Valor mínimo para transações é R$ 1,00.
+- [x] RN04: Valor mínimo para transações é R$ 1,00.
 - [ ] RN05: Cada pagamento deve estar vinculado a um produto.
 - [ ] RN06: Notificação por e-mail após compra.
 - [ ] RN07: Preço de produto só pode ser atualizado sem pedidos pendentes.

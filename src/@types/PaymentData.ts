@@ -1,6 +1,9 @@
 export interface PaymentData {
-  // Defina a estrutura esperada para o paymentData aqui
-  amount: number
+  transaction_amount: number
   description: string
+  payment_method_id: string
+  payer: {
+    email: string
+  }
   // Adicione outros campos conforme necessário
 }

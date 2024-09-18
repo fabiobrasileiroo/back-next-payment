@@ -5,7 +5,6 @@ import * as productService from '../services/productService'
 import { uploadImage } from '../services/imgBbServices'
 import axios from 'axios'
 
-
 import imgbbUploader from 'imgbb-uploader'
 export const createProduct = async (req: Request, res: Response) => {
   try {
@@ -21,7 +20,7 @@ export const createProduct = async (req: Request, res: Response) => {
         'https://api.imgbb.com/1/upload',
         {
           key: process.env.IMGBB_API_KEY, // Substitua pela sua chave de API
-          image: imageData
+          image: imageData,
         },
         {
           headers: {
@@ -41,7 +40,6 @@ export const createProduct = async (req: Request, res: Response) => {
     res.status(500).json({ message: (error as Error).message })
   }
 }
-
 
 export const getProducts = async (req: Request, res: Response) => {
   try {
