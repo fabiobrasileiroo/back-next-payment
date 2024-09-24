@@ -4,6 +4,9 @@
 // Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
@@ -26,21 +29,10 @@ model Product {
 model Company {
   id       Int      @id @default(autoincrement())
   name     String   @unique
-  document String   @unique // Certifique-se de que esta linha existe
+  document String   @unique
   users    User[]   // Relação com os usuários
   units    Unit[]
   products Product[]
-}
-
-
-model User {
-  id       Int      @id @default(autoincrement())
-  email    String   @unique
-  name     String
-  password String
-  role     UserRole
-  company  Company? @relation(fields: [companyId], references: [id])
-  companyId Int?
 }
 
 model Unit {
@@ -48,9 +40,42 @@ model Unit {
   name     String
   company  Company   @relation(fields: [companyId], references: [id])
   companyId Int
+
+  Proposal Proposal[]
+}
+
+model Proposal {
+  id              Int       @id @default(autoincrement())
+  companyName     String
+  companyDocument String
+  user            User      @relation(fields: [userId], references: [id], name: "ProposalToUser")
+  userId          Int       @unique
+  status          ProposalStatus @default(PENDING)
+  createdAt       DateTime  @default(now())
+  proposalValue   Float
+  unitId          Int?      // Unidade da empresa relacionada a esta proposta
+  unit            Unit?     @relation(fields: [unitId], references: [id])
+}
+
+model User {
+  id           Int      @id @default(autoincrement())
+  email        String   @unique
+  name         String
+  password     String
+  role         UserRole @default(PENDING)
+  proposal     Proposal? @relation(name: "ProposalToUser")
+  company      Company? @relation(fields: [companyId], references: [id])
+  companyId    Int?
+}
+
+enum ProposalStatus {
+  PENDING
+  APPROVED
+  REJECTED
 }
 
 enum UserRole {
+  PENDING  // Usuários que ainda não foram aprovados
   USER
   ADMIN
 }

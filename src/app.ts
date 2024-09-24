@@ -5,6 +5,7 @@ import paymentRoutes from './routes/paymentRoutes.js'
 import productRoutes from './routes/productRoutes.js'
 import createUserRouter from './routes/createUserRoutes.js'
 import createUnitRouter from './routes/createUnitRoutes.js'
+import proposalRoutes from './routes/proposalRoutes.js'
 
 const app = express()
 
@@ -19,9 +20,10 @@ app.get('/', (_req, res) => {
 // Defina as rotas para produtos e pagamentos
 app.use('/api/products', productRoutes)
 app.use('/api/payments', paymentRoutes)
-app.use('/api', authRoutes) // Adicione '/api' como prefixo para as rotas de autenticação
+app.use('/auth', authRoutes) // Adicione '/api' como prefixo para as rotas de autenticação
 app.use('/api', createUserRouter) // Adicione '/api' como prefixo para as rotas de autenticação
 app.use('/api', createUnitRouter) // Adicione '/api' como prefixo para as rotas de autenticação
+app.use('/proposal', proposalRoutes) // Adicione '/api' como prefixo para as rotas de autenticação
 
 
 export default app
