@@ -4,7 +4,6 @@ import * as companyService from '../services/companyService'
 
 
 export const createCompany = async (req: Request, res: Response) => {
-
     try {
         const companyData: companyType | any = req.body;
 
