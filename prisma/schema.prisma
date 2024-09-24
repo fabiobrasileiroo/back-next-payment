@@ -24,18 +24,14 @@ model Product {
 }
 
 model Company {
-  id       Int       @id @default(autoincrement())
-  name     String
+  id       Int      @id @default(autoincrement())
+  name     String   @unique
+  document String   @unique // Certifique-se de que esta linha existe
+  users    User[]   // Relação com os usuários
   units    Unit[]
   products Product[]
 }
 
-model Unit {
-  id       Int       @id @default(autoincrement())
-  name     String
-  company  Company   @relation(fields: [companyId], references: [id])
-  companyId Int
-}
 
 model User {
   id       Int      @id @default(autoincrement())
@@ -43,6 +39,15 @@ model User {
   name     String
   password String
   role     UserRole
+  company  Company? @relation(fields: [companyId], references: [id])
+  companyId Int?
+}
+
+model Unit {
+  id       Int       @id @default(autoincrement())
+  name     String
+  company  Company   @relation(fields: [companyId], references: [id])
+  companyId Int
 }
 
 enum UserRole {

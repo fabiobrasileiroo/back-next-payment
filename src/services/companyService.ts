@@ -5,7 +5,10 @@ const prisma = new PrismaClient()
 
 export const createCompany = async (companyData: Prisma.CompanyCreateInput) => {
     return prisma.company.create({
-        data: companyData
+        data: {
+            name: companyData.name,
+            document: companyData.document,
+        }
     })
 }
 
@@ -27,7 +30,7 @@ export const updateCompany = async (
       where: { id },
       data: companyData,
     })
-  }
+}
 
 export const deleteCompany = async (id: number) => {
     return prisma.company.delete({
