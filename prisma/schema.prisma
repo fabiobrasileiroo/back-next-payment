@@ -24,6 +24,7 @@ model Product {
   imageUrl    String?  // Campo opcional para o link da imagem
   companyId   Int
   company     Company  @relation(fields: [companyId], references: [id])
+  quantity    Int
 }
 
 model Payment {

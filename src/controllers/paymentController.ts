@@ -24,9 +24,6 @@ export const createPayment = async (req: Request, res: Response) => {
 }
 
 
-
-
-
 export const storePayment = async (paymentResponse: any) => {
   try {
     const paymentData = {

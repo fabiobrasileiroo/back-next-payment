@@ -84,3 +84,42 @@ export const deleteProduct = async (req: Request, res: Response) => {
     res.status(500).json({ message: (error as Error).message })
   }
 }
+
+export const decrease = async (req: Request, res: Response) => {
+  const { id } = req.params
+  const { quantity } = req.body // quantidade a ser diminuída
+
+  try {
+    const updatedProduct = await productService.decreaseProductQuantity(Number(id), quantity)
+    return res.json(updatedProduct)
+  } catch (error) {
+    return res.status(400).json({ message: (error as Error).message })
+  }
+}
+
+export const increase = async (req: Request, res: Response) => {
+  const { id } = req.params
+  const { quantity } = req.body // A quantidade que você quer aumentar
+
+  try {
+    // Chama a função para aumentar a quantidade
+    const updatedProduct = await productService.increaseProductQuantity(Number(id), quantity)
+    return res.json(updatedProduct)
+  } catch (error) {
+    return res.status(400).json({ message: (error as Error).message })
+  }
+}
+
+
+export const stock = async (req: Request, res: Response) => {
+  const { id } = req.params
+  console.log("🚀 ~ stock ~ id:", id)
+
+
+  try {
+    const stockInfo = await productService.checkProductStock(Number(id))
+    return res.json(stockInfo)
+  } catch (error) {
+    return res.status(400).json({ message: (error as Error).message })
+  }
+}

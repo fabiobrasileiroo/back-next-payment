@@ -17,4 +17,7 @@ export interface PaymentData {
   };
   notification_url?: string; // URL de notificação opcional para callbacks de status do pagamento
   external_reference?: string; // Referência externa opcional, útil para rastrear pedidos no seu sistema
+
+  // Add the productId property here
+  productId: number; // ID of the associated product
 }
