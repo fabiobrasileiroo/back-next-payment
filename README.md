@@ -23,7 +23,7 @@ Api gateway pdv.
 - [x] RF13: Implementar registro de novos usuários.
 - [x] RF14: Implementar controle de permissões por nível de usuário.
 - [x] RF15: Implementar envio de e-mail para usuarios para redefinir a senha.
-
+- [x] RF16: Implementar incremento, decremento e status do estoque do produtos.
 
 ## RNs (Regras de negócio)
 > obs: descreve um aspecto do negócio, definindo ou restringindo tanto sua estrutura quanto seu comportamento
