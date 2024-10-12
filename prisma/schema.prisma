@@ -66,6 +66,10 @@ model User {
   proposal     Proposal? @relation(name: "ProposalToUser")
   company      Company? @relation(fields: [companyId], references: [id])
   companyId    Int?
+
+  // Novos campos para redefinição de senha
+  passwordResetToken   String?
+  passwordResetExpires DateTime?
 }
 
 enum ProposalStatus {

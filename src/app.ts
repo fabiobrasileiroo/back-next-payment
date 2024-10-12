@@ -16,6 +16,9 @@ app.use(cors())
 app.get('/', (_req, res) => {
   res.send('🚀 Api next payment funcionando')
 })
+app.head('/', (req,res)=> {
+  res.send(res)
+})
 
 // Defina as rotas para produtos e pagamentos
 app.use('/api/products', productRoutes)

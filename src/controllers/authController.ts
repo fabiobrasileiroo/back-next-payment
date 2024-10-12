@@ -10,6 +10,7 @@ const saltRounds = 10
 // Função de registro de usuário com proposta
 export const register = async (req: Request, res: Response) => {
   const { email, password, name, companyName, companyDocument, proposalValue, unitName } = req.body;
+  console.log(req.body)
 
   try {
     // Verificar se o usuário já existe

@@ -15,7 +15,10 @@
     "lint": "npx @biomejs/biome lint --write ./",
     "lint:check": "npx @biomejs/biome check --write ./"
   },
-  "keywords": ["api", "api gateway"],
+  "keywords": [
+    "api",
+    "api gateway"
+  ],
   "author": "fabio",
   "license": "MIT",
   "dependencies": {
@@ -29,6 +32,7 @@
     "imgbb-uploader": "1.5.1",
     "jsonwebtoken": "9.0.2",
     "mercadopago": "^2.0.15",
+    "nodemailer": "6.9.15",
     "zod": "3.23.8"
   },
   "devDependencies": {
@@ -37,6 +41,7 @@
     "@types/express": "4.17.21",
     "@types/jsonwebtoken": "9.0.6",
     "@types/node": "22.4.0",
+    "@types/nodemailer": "6.4.16",
     "prisma": "^5.19.1",
     "tsup": "8.2.4",
     "tsx": "4.17.0",
