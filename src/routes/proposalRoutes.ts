@@ -1,5 +1,9 @@
 import express from 'express'
-import { approveProposal,listProposals,rejectProposal } from '@/controllers/proposalController'
+import {
+  approveProposal,
+  listProposals,
+  rejectProposal,
+} from '@/controllers/proposalController'
 
 const proposalRoutes = express.Router()
 
@@ -10,6 +14,5 @@ proposalRoutes.post('/approve', approveProposal)
 proposalRoutes.post('/reject', rejectProposal)
 
 proposalRoutes.get('/proposals', listProposals)
-
 
 export default proposalRoutes

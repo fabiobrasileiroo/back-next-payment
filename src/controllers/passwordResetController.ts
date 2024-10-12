@@ -15,27 +15,27 @@ const transporter = nodemailer.createTransport({
     user: process.env.SMTP_USER,
     pass: process.env.SMTP_PASS,
   },
-});
+})
 
 // Função para enviar o e-mail com o token de redefinição de senha
 export const forgotPassword = async (req: Request, res: Response) => {
-  const { email } = req.body;
+  const { email } = req.body
 
   try {
     // Verificar se o usuário existe
     const user = await prisma.user.findUnique({
       where: { email },
-    });
+    })
 
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      return res.status(404).json({ message: 'User not found' })
     }
 
     // Gerar um token de redefinição de senha (pode ser um código de 6 dígitos ou um hash)
-    const resetToken = crypto.randomBytes(32).toString('hex');
+    const resetToken = crypto.randomBytes(32).toString('hex')
 
     // Criptografar o token antes de salvar no banco
-    const hashedToken = await bcrypt.hash(resetToken, 10);
+    const hashedToken = await bcrypt.hash(resetToken, 10)
 
     // Armazenar o token no banco com uma data de expiração (ex: 1 hora)
     await prisma.user.update({
@@ -44,13 +44,13 @@ export const forgotPassword = async (req: Request, res: Response) => {
         passwordResetToken: hashedToken,
         passwordResetExpires: new Date(Date.now() + 3600000), // 1 hora
       },
-    });
+    })
 
     const mailOptions = {
-  from: process.env.SMTP_USER,
-  to: email,
-  subject: 'Solicitação de Redefinição de Senha',
-  html: `
+      from: process.env.SMTP_USER,
+      to: email,
+      subject: 'Solicitação de Redefinição de Senha',
+      html: `
     <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; background-color: #f4f4f4; padding: 20px; border-radius: 10px; max-width: 600px; margin: 0 auto;">
       <h2 style="text-align: center; color: #007bff;">Solicitação de Redefinição de Senha</h2>
       <p>Olá,</p>
@@ -69,46 +69,45 @@ export const forgotPassword = async (req: Request, res: Response) => {
       <p style="font-weight: bold;">Next Payment</p>
     </div>
   `,
-};
+    }
 
     console.log('Passou aqui')
-    await transporter.sendMail(mailOptions);
+    await transporter.sendMail(mailOptions)
 
-    res.status(200).json({ message: 'Reset token sent to email' });
+    res.status(200).json({ message: 'Reset token sent to email' })
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Server error' });
+    console.error(error)
+    res.status(500).json({ message: 'Server error' })
   }
-};
-
+}
 
 export const resetPassword = async (req: Request, res: Response) => {
-  const { email, token, newPassword } = req.body;
+  const { email, token, newPassword } = req.body
 
   try {
     // Verificar se o usuário existe e tem um token de redefinição
     const user = await prisma.user.findUnique({
       where: { email },
-    });
+    })
 
     if (!user || !user.passwordResetToken || !user.passwordResetExpires) {
-      return res.status(400).json({ message: 'Invalid request' });
+      return res.status(400).json({ message: 'Invalid request' })
     }
 
     // Verificar se o token não expirou
     if (user.passwordResetExpires < new Date()) {
-      return res.status(400).json({ message: 'Token expired' });
+      return res.status(400).json({ message: 'Token expired' })
     }
 
     // Comparar o token recebido com o armazenado no banco
-    const isTokenValid = await bcrypt.compare(token, user.passwordResetToken);
+    const isTokenValid = await bcrypt.compare(token, user.passwordResetToken)
 
     if (!isTokenValid) {
-      return res.status(400).json({ message: 'Invalid token' });
+      return res.status(400).json({ message: 'Invalid token' })
     }
 
     // Criptografar a nova senha
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    const hashedPassword = await bcrypt.hash(newPassword, 10)
 
     // Atualizar a senha do usuário e remover o token de redefinição
     await prisma.user.update({
@@ -118,11 +117,11 @@ export const resetPassword = async (req: Request, res: Response) => {
         passwordResetToken: null,
         passwordResetExpires: null,
       },
-    });
+    })
 
-    res.status(200).json({ message: 'Password reset successfully' });
+    res.status(200).json({ message: 'Password reset successfully' })
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Server error' });
+    console.error(error)
+    res.status(500).json({ message: 'Server error' })
   }
-};
+}

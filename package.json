@@ -15,10 +15,7 @@
     "lint": "npx @biomejs/biome lint --write ./",
     "lint:check": "npx @biomejs/biome check --write ./"
   },
-  "keywords": [
-    "api",
-    "api gateway"
-  ],
+  "keywords": ["api", "api gateway"],
   "author": "fabio",
   "license": "MIT",
   "dependencies": {

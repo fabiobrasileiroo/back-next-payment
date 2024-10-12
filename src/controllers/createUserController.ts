@@ -19,16 +19,20 @@ export const createUserInCompany = async (req: Request, res: Response) => {
     // Verificar se o usuário autenticado é realmente um ADMIN
     const adminUser = await prisma.user.findUnique({
       where: { id: adminUserId },
-      include: { company: true },  // Incluir a empresa relacionada
+      include: { company: true }, // Incluir a empresa relacionada
     })
 
     if (!adminUser || adminUser.role !== 'ADMIN') {
-      return res.status(403).json({ message: 'Only administrators can create users.' })
+      return res
+        .status(403)
+        .json({ message: 'Only administrators can create users.' })
     }
 
     // Verifica se o adminUser tem uma empresa associada
     if (!adminUser.companyId) {
-      return res.status(400).json({ message: 'Admin user does not have a company associated.' })
+      return res
+        .status(400)
+        .json({ message: 'Admin user does not have a company associated.' })
     }
 
     // Verificar se o email já existe
@@ -50,7 +54,7 @@ export const createUserInCompany = async (req: Request, res: Response) => {
         password: hashedPassword,
         name,
         role: role || 'USER', // Por padrão, novos usuários são do tipo 'USER'
-        company: { connect: { id: adminUser.companyId } },  // Associa o novo usuário à empresa do admin
+        company: { connect: { id: adminUser.companyId } }, // Associa o novo usuário à empresa do admin
       },
     })
 

@@ -22,6 +22,7 @@ Api gateway pdv.
 - [x] RF12: Implementar autenticação JWT para operações seguras.
 - [x] RF13: Implementar registro de novos usuários.
 - [x] RF14: Implementar controle de permissões por nível de usuário.
+- [x] RF15: Implementar envio de e-mail para usuarios para redefinir a senha.
 
 
 ## RNs (Regras de negócio)

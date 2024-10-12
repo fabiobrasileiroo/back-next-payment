@@ -17,23 +17,27 @@ export const createUnitInCompany = async (req: Request, res: Response) => {
     // Verificar se o usuário autenticado é realmente um ADMIN
     const adminUser = await prisma.user.findUnique({
       where: { id: adminUserId },
-      include: { company: true },  // Incluir a empresa relacionada
+      include: { company: true }, // Incluir a empresa relacionada
     })
 
     if (!adminUser || adminUser.role !== 'ADMIN') {
-      return res.status(403).json({ message: 'Only administrators can create units.' })
+      return res
+        .status(403)
+        .json({ message: 'Only administrators can create units.' })
     }
 
     // Verifica se o adminUser tem uma empresa associada
     if (!adminUser.companyId) {
-      return res.status(400).json({ message: 'Admin user does not have a company associated.' })
+      return res
+        .status(400)
+        .json({ message: 'Admin user does not have a company associated.' })
     }
 
     // Criar a nova unidade e associá-la à empresa do administrador
     const newUnit = await prisma.unit.create({
       data: {
         name,
-        company: { connect: { id: adminUser.companyId } },  // Associa a unidade à empresa do administrador
+        company: { connect: { id: adminUser.companyId } }, // Associa a unidade à empresa do administrador
       },
     })
 

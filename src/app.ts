@@ -16,7 +16,7 @@ app.use(cors())
 app.get('/', (_req, res) => {
   res.send('🚀 Api next payment funcionando')
 })
-app.head('/', (req,res)=> {
+app.head('/', (req, res) => {
   res.send(res)
 })
 
@@ -27,6 +27,5 @@ app.use('/auth', authRoutes) // Adicione '/api' como prefixo para as rotas de au
 app.use('/api', createUserRouter) // Adicione '/api' como prefixo para as rotas de autenticação
 app.use('/api', createUnitRouter) // Adicione '/api' como prefixo para as rotas de autenticação
 app.use('/proposal', proposalRoutes) // Adicione '/api' como prefixo para as rotas de autenticação
-
 
 export default app

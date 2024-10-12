@@ -2,7 +2,7 @@ import 'dotenv/config'
 import { MercadoPagoConfig } from 'mercadopago'
 
 const mercadoPagoConfig = new MercadoPagoConfig({
-  accessToken: process.env.accessToken || '',
+  accessToken: process.env.SANDBOX_ACCESS_TOKEN || '', // Use o token de sandbox aqui
   options: {
     timeout: 5000,
   },

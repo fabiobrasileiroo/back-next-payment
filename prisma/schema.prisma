@@ -26,6 +26,16 @@ model Product {
   company     Company  @relation(fields: [companyId], references: [id])
 }
 
+model Payment {
+  id               Int      @id @default(autoincrement())
+  transaction_amount Float
+  status           String
+  payer_email      String
+  payment_method   String
+  payment_id       String
+  createdAt        DateTime @default(now())
+}
+
 model Company {
   id       Int      @id @default(autoincrement())
   name     String   @unique
@@ -36,13 +46,14 @@ model Company {
 }
 
 model Unit {
-  id       Int       @id @default(autoincrement())
-  name     String
-  company  Company   @relation(fields: [companyId], references: [id])
-  companyId Int
-
-  Proposal Proposal[]
+  id          Int      @id @default(autoincrement())
+  name        String
+  company     Company  @relation(fields: [companyId], references: [id])
+  companyId   Int
+  pixKey      String?  // Chave PIX opcional da unidade
+  Proposal    Proposal[]
 }
+
 
 model Proposal {
   id              Int       @id @default(autoincrement())
