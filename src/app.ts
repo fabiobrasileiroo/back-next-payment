@@ -6,6 +6,7 @@ import productRoutes from './routes/productRoutes.js'
 import createUserRouter from './routes/createUserRoutes.js'
 import createUnitRouter from './routes/createUnitRoutes.js'
 import proposalRoutes from './routes/proposalRoutes.js'
+import validateToken from './routes/validateToken.js'
 
 const app = express()
 
@@ -27,5 +28,6 @@ app.use('/auth', authRoutes) // Adicione '/api' como prefixo para as rotas de au
 app.use('/api', createUserRouter) // Adicione '/api' como prefixo para as rotas de autenticação
 app.use('/api', createUnitRouter) // Adicione '/api' como prefixo para as rotas de autenticação
 app.use('/proposal', proposalRoutes) // Adicione '/api' como prefixo para as rotas de autenticação
+app.use('/auth', validateToken) // Adicione '/api' como prefixo para as rotas de autenticação
 
 export default app
