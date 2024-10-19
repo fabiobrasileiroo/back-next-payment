@@ -29,5 +29,27 @@ app.use('/api', createUserRouter) // Adicione '/api' como prefixo para as rotas 
 app.use('/api', createUnitRouter) // Adicione '/api' como prefixo para as rotas de autenticação
 app.use('/proposal', proposalRoutes) // Adicione '/api' como prefixo para as rotas de autenticação
 app.use('/auth', validateToken) // Adicione '/api' como prefixo para as rotas de autenticação
+// Importações necessárias
+import { PrismaClient } from '@prisma/client'
+
+// Inicialize o Prisma Client
+const prisma = new PrismaClient();
+
+// Rota para testar a conexão com o banco de dados
+app.get('/test-db', async (req, res) => {
+    try {
+        // Tente realizar uma consulta simples para verificar a conexão
+        await prisma.$connect();
+        res.status(200).json({ message: 'Conexão com o banco de dados foi bem-sucedida!' });
+    } catch (error) {
+        console.error('Erro ao conectar com o banco de dados:', error);
+        res.status(500).json({ message: 'Falha na conexão com o banco de dados.', error: (error as Error).message });
+    } finally {
+        // Feche a conexão do Prisma
+        await prisma.$disconnect();
+    }
+});
+
+
 
 export default app
