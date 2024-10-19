@@ -16,14 +16,22 @@ generator client {
 }
 
 model Product {
-  id          Int      @id @default(autoincrement())
+  id          Int       @id @default(autoincrement())
   name        String
   price       Float
   description String?
-  imageUrl    String?  // Campo opcional para o link da imagem
+  imageUrl    String?   // Campo opcional para o link da imagem
   companyId   Int
-  company     Company  @relation(fields: [companyId], references: [id])
+  company     Company   @relation(fields: [companyId], references: [id])
   quantity    Int
+  categoryId  Int?
+  category    Category? @relation(fields: [categoryId], references: [id])
+}
+
+model Category {
+  id       Int       @id @default(autoincrement())
+  name     String    @unique
+  products Product[]
 }
 
 model Payment {

@@ -10,12 +10,11 @@ router.get('/simulate-payment', async (req, res) => {
   try {
     // Chamando a função de simulação de pagamento PIX
     // await simulatePixPayment();
-    res.send('Simulação de pagamento com PIX realizada com sucesso!');
+    res.send('Simulação de pagamento com PIX realizada com sucesso!')
   } catch (error) {
-    console.error('Erro ao simular o pagamento:', error);
-    res.status(500).send('Erro ao simular pagamento');
+    console.error('Erro ao simular o pagamento:', error)
+    res.status(500).send('Erro ao simular pagamento')
   }
-});
-
+})
 
 export default router

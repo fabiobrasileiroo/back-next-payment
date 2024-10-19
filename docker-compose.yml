@@ -5,10 +5,20 @@ services:
     build: .
     container_name: node_app-api-gateway
     environment:
-      - DATABASE_URL=postgresql://api-gateway_owner:YgkAcWHq3y1K@ep-weathered-leaf-a59m40bj.us-east-2.aws.neon.tech/api-gateway?sslmode=require
-      - PORT=3000
+      - DATABASE_URL
+      - PORT 
+      - SANDBOX_ACCESS_TOKEN
+      - JWT_SECRET
+      - SMTP_HOST
+      - SMTP_PORT
+      - SMTP_USER
+      - SMTP_PASS
     ports:
       - "3000:3000"
     volumes:
       - .:/usr/src/app
+      - /usr/src/app/node_modules # Evita sobrescrever a pasta node_modules no container
     command: ["npm", "start"]
+    # Dependências de serviço, caso tenha banco de dados, pode adicionar aqui
+    # depends_on:
+    #   - postgres

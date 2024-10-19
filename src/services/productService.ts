@@ -1,26 +1,78 @@
-import { type Prisma, PrismaClient } from '@prisma/client'
-import type { Product } from '../@types/productTypes'
+import { PrismaClient, Prisma } from '@prisma/client'
+import { Product } from '../@types/productTypes'
 
 const prisma = new PrismaClient()
 
-export const createProduct = async (productData: Prisma.ProductCreateInput) => {
+// Função para criar ou obter uma categoria existente
+export const createOrUpdateCategory = async (name: string) => {
+  let category = await prisma.category.findUnique({
+    where: { name },
+  })
+
+  if (!category) {
+    category = await prisma.category.create({
+      data: { name },
+    })
+  }
+
+  return category
+}
+
+
+
+// Função para criar um produto com o ID da empresa e a categoria associados
+export const createProduct = async (productData: Prisma.ProductCreateInput, companyId: number, categoryId?: number) => {
   return prisma.product.create({
-    data: productData,
+    data: {
+      name: productData.name,
+      price: productData.price,
+      description: productData.description,
+      imageUrl: productData.imageUrl,
+      quantity: productData.quantity,
+      company: {
+        connect: { id: companyId },
+      },
+      ...(categoryId && {
+        category: {
+          connect: { id: categoryId },
+        },
+      }),
+    },
+    include: {
+      company: true,
+      category: true,
+    },
   })
 }
 export const getProducts = async () => {
   return prisma.product.findMany({
     include: {
       company: true,
+      category: true,
     },
   })
 }
+
+// Função para buscar produtos por categoria
+export const getProductsByCategory = async (categoryId: number) => {
+  return prisma.product.findMany({
+    where: {
+      categoryId: categoryId,
+    },
+    include: {
+      company: true,
+      category: true,
+    },
+  })
+}
+
 
 export const getProductById = async (id: number) => {
   return prisma.product.findUnique({
     where: { id },
     include: {
       company: true,
+      category: true,
     },
   })
 }
@@ -29,66 +81,96 @@ export const updateProduct = async (
   id: number,
   productData: Partial<Product>
 ) => {
+  // Configuração para conectar a categoria, se fornecida
+  let categoryConnect = undefined
+  if (productData.categoryId) {
+    const category = await prisma.category.findUnique({
+      where: { id: productData.categoryId },
+    })
+
+    if (!category) {
+      throw new Error('Categoria não encontrada')
+    }
+
+    categoryConnect = { connect: { id: category.id } }
+  }
+
+  // Configuração para conectar a empresa, se fornecida
+  let companyConnect = undefined
+  if (productData.companyId) {
+    const company = await prisma.company.findUnique({
+      where: { id: productData.companyId },
+    })
+
+    if (!company) {
+      throw new Error('Empresa não encontrada')
+    }
+
+    companyConnect = { connect: { id: company.id } }
+  }
+
+  // Atualiza o produto com a empresa e a categoria associadas, se fornecidas
   return prisma.product.update({
     where: { id },
-    data: productData,
+    data: {
+      name: productData.name,
+      price: productData.price,
+      description: productData.description,
+      imageUrl: productData.imageUrl,
+      quantity: productData.quantity,
+      category: categoryConnect, // Conecta a categoria, se fornecida
+      company: companyConnect,   // Conecta a empresa, se fornecida
+    },
+    include: { category: true, company: true }, // Inclui a categoria e a empresa nos resultados
   })
 }
 
+
 export const deleteProduct = async (id: number) => {
+  // Verifica se o produto existe
+  const product = await prisma.product.findUnique({
+    where: { id },
+  })
+
+  if (!product) {
+    throw new Error('Produto não encontrado')
+  }
+
+  // Deleta o produto se ele existir
   return prisma.product.delete({
     where: { id },
   })
 }
 
-export const increaseProductQuantity = async (productId: number, quantityToIncrease: number) => {
+
+export const increaseProductQuantity = async (
+  productId: number,
+  quantityToIncrease: number
+) => {
   const product = await prisma.product.findUnique({
-    where: { id: productId }
+    where: { id: productId },
   })
 
   if (!product) {
     throw new Error('Produto não encontrado')
   }
 
-  // Atualiza o produto com a nova quantidade
   const updatedProduct = await prisma.product.update({
     where: { id: productId },
     data: {
-      quantity: product.quantity + quantityToIncrease
-    }
+      quantity: product.quantity + quantityToIncrease,
+    },
   })
 
   return updatedProduct
 }
 
-export const decreaseProductQuantity = async (productId: number, quantityToDecrease: number) => {
+export const decreaseProductQuantity = async (
+  productId: number,
+  quantityToDecrease: number
+) => {
   const product = await prisma.product.findUnique({
-    where: { id: productId }
-  })
-
-  if (!product) {
-    throw new Error('Produto não encontrado')
-  }
-
-  // Verifica se a quantidade atual é suficiente para decrementar
-  if (product.quantity < quantityToDecrease) {
-    throw new Error('Quantidade insuficiente no estoque')
-  }
-
-  // Atualiza o produto com a nova quantidade
-  const updatedProduct = await prisma.product.update({
     where: { id: productId },
-    data: {
-      quantity: product.quantity - quantityToDecrease
-    }
-  })
-
-  return updatedProduct
-}
-
-export const decreaseProductQuantityWithCheck = async (productId: number, quantityToDecrease: number) => {
-  const product = await prisma.product.findUnique({
-    where: { id: productId }
   })
 
   if (!product) {
@@ -99,16 +181,11 @@ export const decreaseProductQuantityWithCheck = async (productId: number, quanti
     throw new Error('Quantidade insuficiente no estoque')
   }
 
-  const newQuantity = product.quantity - quantityToDecrease
-
-  // Atualiza o produto e, se a quantidade chegar a 0, você pode marcar como indisponível
   const updatedProduct = await prisma.product.update({
     where: { id: productId },
     data: {
-      quantity: newQuantity,
-      // Exemplo de como marcar o produto como indisponível se a quantidade chegar a 0
-      ...(newQuantity === 0 && { status: 'Indisponível' }) 
-    }
+      quantity: product.quantity - quantityToDecrease,
+    },
   })
 
   return updatedProduct
@@ -116,7 +193,7 @@ export const decreaseProductQuantityWithCheck = async (productId: number, quanti
 
 export const checkProductStock = async (productId: number) => {
   const product = await prisma.product.findUnique({
-    where: { id: productId }
+    where: { id: productId },
   })
 
   if (!product) {
@@ -126,6 +203,6 @@ export const checkProductStock = async (productId: number) => {
   return {
     name: product.name,
     quantity: product.quantity,
-    status: product.quantity > 0 ? 'Disponível' : 'Indisponível'
+    status: product.quantity > 0 ? 'Disponível' : 'Indisponível',
   }
 }

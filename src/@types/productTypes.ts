@@ -2,5 +2,9 @@ export interface Product {
   id?: number
   name: string
   price: number
-  // Adicione outros campos conforme necessário
+  description?: string
+  imageUrl?: string
+  quantity: number
+  companyId: number
+  categoryId?: number
 }
