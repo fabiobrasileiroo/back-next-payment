@@ -1,24 +1,37 @@
-version: '3.8'
+version: '3'
 
 services:
-  app:
-    build: .
-    container_name: node_app-api-gateway
+  api-gateway-pg:
+    image: bitnami/postgresql
+    ports: 
+      - 5432:5432
     environment:
-      - DATABASE_URL
-      - PORT 
-      - SANDBOX_ACCESS_TOKEN
-      - JWT_SECRET
-      - SMTP_HOST
-      - SMTP_PORT
-      - SMTP_USER
-      - SMTP_PASS
-    ports:
-      - "3000:3000"
-    volumes:
-      - .:/usr/src/app
-      - /usr/src/app/node_modules # Evita sobrescrever a pasta node_modules no container
-    command: ["npm", "start"]
+      - POSTGRESQL_USERNAME=docker 
+      - POSTGRESQL_PASSWORD=docker 
+      - POSTGRESQL_DATABASE=api-gateway
+# version: '3.8'
+
+# services:
+#   app:
+#     build: .
+#     container_name: node_app-api-gateway
+#     environment:
+#       - DATABASE_URL
+#       - PORT 
+#       - SANDBOX_ACCESS_TOKEN
+#       - JWT_SECRET
+#       - SMTP_HOST
+#       - SMTP_PORT
+#       - SMTP_USER
+#       - SMTP_PASS
+#     ports:
+#       - "3000:3000"
+#     volumes:
+#       - .:/usr/src/app
+#       - /usr/src/app/node_modules # Evita sobrescrever a pasta node_modules no container
+#     command: ["npm", "start"]
+
+
     # Dependências de serviço, caso tenha banco de dados, pode adicionar aqui
     # depends_on:
     #   - postgres

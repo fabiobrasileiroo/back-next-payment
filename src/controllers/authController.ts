@@ -141,11 +141,11 @@ export const register = async (req: Request, res: Response) => {
 const getMenuForRole = (role: any) => {
   const menu = [
     {
-      group: 'Products',
+      group: 'Loja',
       separator: false,
       items: [
         {
-          icon: 'assets/icons/heroicons/outline/cube.svg',
+          icon: 'assets/icons/products.svg',
           label: 'Products',
           route: '/products',
           children: [
@@ -254,6 +254,7 @@ export const login = async (req: Request, res: Response) => {
       token,
       user: {
         id: user.id,
+        companyId: user.companyId,
         name: user.name,
         email: user.email,
         imageUrl: user.imageUrl,
