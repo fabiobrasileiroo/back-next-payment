@@ -254,7 +254,9 @@ export const login = async (req: Request, res: Response) => {
       token,
       user: {
         id: user.id,
+        name: user.name,
         email: user.email,
+        imageUrl: user.imageUrl,
         role: user.role,
       },
       menu, // Include the menu in the response

@@ -47,32 +47,31 @@ export const forgotPassword = async (req: Request, res: Response) => {
     })
 
     // Format the reset URL correctly, passing both the token and email as query parameters
-    const urlFront = `http://localhost:4200/auth/new-password?token=${resetToken}&email=${encodeURIComponent(email)}`
+    const urlFront = `https://front-next-payment.vercel.app/auth/new-password?token=${resetToken}&email=${encodeURIComponent(email)}`
 
     const mailOptions = {
       from: process.env.SMTP_USER,
       to: email,
-      subject: 'Solicitação de Redefinição de Senha',
+      subject: "Solicitação de Redefinição de Senha",
       html: `
-        <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; background-color: #f4f4f4; padding: 20px; border-radius: 10px; max-width: 600px; margin: 0 auto;">
-          <h2 style="text-align: center; color: #007bff;">Solicitação de Redefinição de Senha</h2>
-          <p>Olá,</p>
-          <p>Você solicitou a redefinição de senha da sua conta. Por favor, utilize o código abaixo para redefinir sua senha:</p>
-          
-          <div style="text-align: center; margin: 30px 0;">
-            <span style="display: inline-block; padding: 15px 30px; background-color: #007bff; color: white; font-size: 22px; border-radius: 8px; font-weight: bold; letter-spacing: 2px;">${resetToken}</span>
-          </div>
+    <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; background-color: #f4f4f4; padding: 20px; border-radius: 10px; max-width: 600px; margin: 0 auto; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);">
+      <div style="text-align: center; margin-bottom: 20px;">
+        <img src="https://i.ibb.co/L15m4sM/logo.png" alt="Logo da Marca" style="max-width: 150px; border-radius: 5px;" />
+      </div>
+      <h2 style="text-align: center; color: #320B4E; margin-bottom: 30px;">Solicitação de Redefinição de Senha</h2>
+      <p>Olá,</p>
+      <p>Você solicitou a redefinição de senha da sua conta. Por favor, utilize o botão abaixo para redefinir sua senha:</p>
 
-          <p style="text-align: center; margin-bottom: 30px;">
-            <a href="${urlFront}" style="padding: 12px 25px; background-color: #d6d6d6; color: black; border: none; border-radius: 5px; cursor: pointer; text-decoration: none; font-size: 16px;">Ir para redefinir senha</a>
-          </p>
+      <p style="text-align: center; margin-bottom: 30px;">
+        <a href="${urlFront}" style="padding: 15px 30px; background-color: #FF1FFF; color: #fff; border: none; border-radius: 5px; cursor: pointer; text-decoration: none; font-size: 18px; font-weight: bold;">Ir para redefinir senha</a>
+      </p>
 
-          <p style="text-align: center; color: #999;">Se você não solicitou essa ação, por favor, ignore este email. O código expirará em 1 hora.</p>
-          <p>Atenciosamente,</p>
-          <p style="font-weight: bold;">Next Payment</p>
-        </div>
-      `,
-    }
+      <p style="text-align: center; color: #777; font-size: 14px;">Se você não solicitou essa ação, por favor, ignore este email. O código expirará em 1 hora.</p>
+      <p style="margin-top: 30px;">Atenciosamente,</p>
+      <p style="font-weight: bold; color: #320B4E;">Next Payment</p>
+    </div>
+  `,
+    };
 
     // Log the email sending step for debugging purposes
     console.log('Sending reset password email to:', email)
