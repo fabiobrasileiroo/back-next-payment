@@ -2,8 +2,9 @@
 
 # Back
 
-
 Api gateway pdv.
+
+<img src="https://github.com/user-attachments/assets/f5571745-708e-47bd-89d8-cd7a74f0929a" alt="Descrição da imagem" >
 
 ## RFs (Requisitos funcionais) 
 > obs: é uma declaração de como um sistema deve se comportar
