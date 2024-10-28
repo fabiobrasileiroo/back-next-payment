@@ -1,3 +1,4 @@
+import publicRouter from './routes/productRoutesPublic.js'
 import cors from 'cors'
 import express from 'express'
 import authRoutes from './routes/authRoutes.js'
@@ -33,6 +34,7 @@ app.use((req, res, next) => {
 app.get('/', (_req, res) => {
   res.send('🚀 Api next payment funcionando atualizado?')
 })
+
 app.head('/', (req, res) => {
   res.send(res)
 })
@@ -45,6 +47,7 @@ app.use('/api', createUserRouter) // Adicione '/api' como prefixo para as rotas 
 app.use('/api', createUnitRouter) // Adicione '/api' como prefixo para as rotas de autenticação
 app.use('/proposal', proposalRoutes) // Adicione '/api' como prefixo para as rotas de autenticação
 app.use('/auth', validateToken) // Adicione '/api' como prefixo para as rotas de autenticação
+app.use('/all', publicRouter) // Adicione '/api' como prefixo para as rotas de autenticação
 // Importações necessárias
 import { PrismaClient } from '@prisma/client'
 

@@ -127,6 +127,19 @@ export const deleteProduct = async (req: Request, res: Response) => {
     res.status(500).json({ message: (error as Error).message })
   }
 }
+export const deleteProducts = async (req: Request, res: Response) => {
+  try {
+    const ids = req.body.ids; // Recebe o array de IDs
+    if (!ids || !Array.isArray(ids)) {
+      return res.status(400).json({ message: 'Array de IDs inválido' });
+    }
+    
+    await productService.deleteProducts(ids);
+    res.status(204).end();
+  } catch (error) {
+    res.status(500).json({ message: (error as Error).message });
+  }
+}
 
 export const decrease = async (req: Request, res: Response) => {
   const { id } = req.params

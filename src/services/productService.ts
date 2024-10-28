@@ -142,6 +142,23 @@ export const deleteProduct = async (id: number) => {
   })
 }
 
+export const deleteProducts = async (ids: number[]) => {
+  // Verifica se os produtos existem
+  const products = await prisma.product.findMany({
+    where: { id: { in: ids } },
+  });
+
+  if (products.length !== ids.length) {
+    throw new Error('Um ou mais produtos não foram encontrados');
+  }
+
+  // Deleta os produtos
+  return prisma.product.deleteMany({
+    where: { id: { in: ids } },
+  });
+};
+
+
 
 export const increaseProductQuantity = async (
   productId: number,
