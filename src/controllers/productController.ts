@@ -112,7 +112,7 @@ export const updateProduct = async (req: Request, res: Response) => {
     }
 
     const updatedProduct = await productService.updateProduct(id, productData)
-    res.status(200).json(updatedProduct)
+    res.status(201).json(updatedProduct)
   } catch (error) {
     res.status(500).json({ message: (error as Error).message })
   }
@@ -143,14 +143,16 @@ export const deleteProducts = async (req: Request, res: Response) => {
 
 export const decrease = async (req: Request, res: Response) => {
   const { id } = req.params
+  console.log("🚀 ~ decrease ~ id:", id)
   const { quantity } = req.body // Quantidade a ser diminuída
+  console.log("🚀 ~ decrease ~ quantity:", quantity)
 
   try {
     const updatedProduct = await productService.decreaseProductQuantity(
       Number(id),
       quantity
     )
-    return res.json(updatedProduct)
+    return res.status(201).json(updatedProduct)
   } catch (error) {
     return res.status(400).json({ message: (error as Error).message })
   }
@@ -165,7 +167,7 @@ export const increase = async (req: Request, res: Response) => {
       Number(id),
       quantity
     )
-    return res.json(updatedProduct)
+    return res.status(201).json(updatedProduct)
   } catch (error) {
     return res.status(400).json({ message: (error as Error).message })
   }

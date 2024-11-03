@@ -31,8 +31,8 @@ router.delete('/', authorize([UserRole.ADMIN]),deleteProducts);
 
 
 // Rotas para manipulação de estoque com autorização baseada em função de usuário (role)
-router.post('/:id/decrease', authorize([UserRole.ADMIN]), decrease) // Apenas ADMIN pode diminuir o estoque
-router.post('/:id/increase', authorize([UserRole.ADMIN]), increase) // Apenas ADMIN pode aumentar o estoque
+router.put('/:id/decrease', authorize([UserRole.ADMIN]), decrease) // Apenas ADMIN pode diminuir o estoque
+router.put('/:id/increase', authorize([UserRole.ADMIN]), increase) // Apenas ADMIN pode aumentar o estoque
 router.get('/:id/stock', authorize([UserRole.ADMIN]), stock) // Apenas ADMIN pode verificar o estoque
 
 export default router
