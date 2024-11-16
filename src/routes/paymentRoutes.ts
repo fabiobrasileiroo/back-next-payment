@@ -1,6 +1,6 @@
 import express from 'express'
 import { createPayment } from '../controllers/paymentController'
-import { webHook } from '@/controllers/paymentWebHookController';
+import { webHook } from '@/controllers/hook.payment.controller';
 
 const router = express.Router()
 

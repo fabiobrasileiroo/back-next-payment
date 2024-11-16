@@ -23,8 +23,9 @@ const verifyWebhookSignature = (req: any): boolean => {
   }
 
   const signatureHeader = req.headers['x-signature'] as string;
-  if (!signatureHeader) {
-    console.error('Cabeçalho x-signature ausente.');
+  const xRequestId = req.headers['x-request-id'] as string;
+  if (!signatureHeader || !xRequestId) {
+    console.error('Cabeçalhos x-signature ou x-request-id ausentes.');
     return false;
   }
 
@@ -37,14 +38,12 @@ const verifyWebhookSignature = (req: any): boolean => {
   }
 
   const [, timestamp, receivedHash] = match;
-
-  console.log('🚀 ~ verifyWebhookSignature ~ timestamp:', timestamp);
-  console.log('🚀 ~ verifyWebhookSignature ~ receivedHash:', receivedHash);
-
   const rawBody = req.rawBody || JSON.stringify(req.body);
+
+  const manifest = `id:${req.query['data.id']};request-id:${xRequestId};ts:${timestamp};${rawBody}`;
   const calculatedHash = crypto
     .createHmac('sha256', secret)
-    .update(`ts=${timestamp}${rawBody}`)
+    .update(manifest)
     .digest('hex');
 
   console.log('🚀 ~ verifyWebhookSignature ~ calculatedHash:', calculatedHash);
@@ -61,6 +60,10 @@ const verifyWebhookSignature = (req: any): boolean => {
 const getPaymentDetails = async (paymentId: string) => {
   try {
     const accessToken = process.env.MERCADO_PAGO_ACCESS_TOKEN;
+    if (!accessToken) {
+      throw new Error('Access token não configurado.');
+    }
+
     const response = await axios.get(
       `https://api.mercadopago.com/v1/payments/${paymentId}`,
       {
@@ -112,6 +115,9 @@ const processNotification = async (notification: any) => {
   if (type === 'payment') {
     const paymentDetails = await getPaymentDetails(id);
     await updatePaymentStatus(paymentDetails);
+  } else if (type === 'merchant_order') {
+    console.log('Notificação de merchant order recebida:', notification);
+    // Processar a lógica de merchant_order aqui, se necessário
   } else {
     console.log(`Tipo de notificação não suportado: ${type}`);
   }
