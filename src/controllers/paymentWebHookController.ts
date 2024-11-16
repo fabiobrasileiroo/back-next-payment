@@ -85,9 +85,9 @@ const getPaymentDetails = async (paymentId: string) => {
 export const webHook = async (req: Request, res: Response) => {
   try {
     // Validação da assinatura
-    if (!verifyWebhookSignature(req)) {
-      return res.status(403).send('Assinatura inválida');
-    }
+    // if (!verifyWebhookSignature(req)) {
+    //   return res.status(403).send('Assinatura inválida');
+    // }
 
     const notification = req.body;
     console.log('Notificação recebida:', notification);
