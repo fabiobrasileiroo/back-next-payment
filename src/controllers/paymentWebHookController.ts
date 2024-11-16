@@ -12,7 +12,9 @@ const verifyWebhookSignature = (req: Request): boolean => {
   const secret = process.env.WEBHOOK_SECRET;
   console.log("🚀 ~ verifyWebhookSignature ~ secret:", secret)
   const payload = JSON.stringify(req.body);
-  const signature = req.headers['x-mercadopago-signature'] as string;
+  const signature = req.headers['x-signature'] as string;
+  const signatureTudo = req.headers;
+  console.log("🚀 ~ verifyWebhookSignature ~ signatureTudo:", signatureTudo)
   console.log("🚀 ~ verifyWebhookSignature ~ signature:", signature)
 
   if (!secret || !signature) {
