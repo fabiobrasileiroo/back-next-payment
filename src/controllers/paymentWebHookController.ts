@@ -1,7 +1,9 @@
+import 'dotenv/config';
 import axios from 'axios';
 import { PrismaClient } from '@prisma/client';
 import * as crypto from 'crypto';
 import type { Request, Response } from 'express';
+import { accessToken } from '@/config/mercadoPagoConfig';
 
 const prisma = new PrismaClient();
 
@@ -27,7 +29,7 @@ const getPaymentDetails = async (paymentId: string) => {
       `https://api.mercadopago.com/v1/payments/${paymentId}`,
       {
         headers: {
-          Authorization: `Bearer ${process.env.MERCADO_PAGO_ACCESS_TOKEN}`,
+          Authorization: `Bearer ${accessToken}`,
         },
       }
     );

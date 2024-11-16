@@ -5,7 +5,7 @@ import { MercadoPagoConfig, Payment } from 'mercadopago';
 const isProduction = process.env.ENVIRONMENT === 'production';
 
 // Obtain the correct accessToken based on environment
-const accessToken: string = isProduction 
+export const accessToken: string = isProduction 
   ? (process.env.PROD_ACCESS_TOKEN as string)
   : (process.env.SANDBOX_ACCESS_TOKEN as string);
 
