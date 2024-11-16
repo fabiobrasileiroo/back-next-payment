@@ -3,32 +3,60 @@ import axios from 'axios';
 import { PrismaClient } from '@prisma/client';
 import * as crypto from 'crypto';
 import type { Request, Response } from 'express';
-import { accessToken } from '@/config/mercadoPagoConfig';
 
 const prisma = new PrismaClient();
 
 // Função para validar a assinatura do webhook
 const verifyWebhookSignature = (req: Request): boolean => {
   const secret = process.env.WEBHOOK_SECRET;
-  console.log("🚀 ~ verifyWebhookSignature ~ secret:", secret)
-  const payload = JSON.stringify(req.body);
-  const signature = req.headers['x-signature'] as string;
-  const signatureTudo = req.headers;
-  console.log("🚀 ~ verifyWebhookSignature ~ signatureTudo:", signatureTudo)
-  console.log("🚀 ~ verifyWebhookSignature ~ signature:", signature)
-
-  if (!secret || !signature) {
-    console.error('Assinatura ou segredo ausentes');
+  if (!secret) {
+    console.error('Segredo (WEBHOOK_SECRET) ausente no ambiente.');
     return false;
   }
 
-  const hash = crypto.createHmac('sha256', secret).update(payload).digest('hex');
-  return hash === signature;
+  // Cabeçalho x-signature
+  const signatureHeader = req.headers['x-signature'] as string;
+  if (!signatureHeader) {
+    console.error('Cabeçalho x-signature ausente.');
+    return false;
+  }
+
+  console.log('🚀 ~ verifyWebhookSignature ~ signatureHeader:', signatureHeader);
+
+  // Extrair timestamp (ts) e hash (v1) do cabeçalho
+  const match = signatureHeader.match(/ts=(\d+),v1=([a-f0-9]+)/);
+  if (!match) {
+    console.error('Formato inválido no cabeçalho x-signature.');
+    return false;
+  }
+
+  const [, timestamp, receivedHash] = match;
+
+  console.log('🚀 ~ verifyWebhookSignature ~ timestamp:', timestamp);
+  console.log('🚀 ~ verifyWebhookSignature ~ receivedHash:', receivedHash);
+
+  // Recalcular o hash
+  const payload = JSON.stringify(req.body);
+  const calculatedHash = crypto
+    .createHmac('sha256', secret)
+    .update(`ts=${timestamp}${payload}`)
+    .digest('hex');
+
+  console.log('🚀 ~ verifyWebhookSignature ~ calculatedHash:', calculatedHash);
+
+  // Comparar o hash recebido com o calculado
+  const isValid = receivedHash === calculatedHash;
+  if (!isValid) {
+    console.error('Assinatura inválida. Hash não corresponde.');
+  }
+
+  return isValid;
 };
 
 // Função para buscar detalhes do pagamento pelo ID
 const getPaymentDetails = async (paymentId: string) => {
   try {
+    const accessToken = process.env.MERCADO_PAGO_ACCESS_TOKEN;
     const response = await axios.get(
       `https://api.mercadopago.com/v1/payments/${paymentId}`,
       {
@@ -41,7 +69,10 @@ const getPaymentDetails = async (paymentId: string) => {
     console.log('Detalhes do pagamento:', response.data);
     return response.data;
   } catch (error) {
-    console.error('Erro ao buscar detalhes do pagamento:', (error as any).response?.data || (error as Error).message);
+    console.error(
+      'Erro ao buscar detalhes do pagamento:',
+      (error as any).response?.data || (error as Error).message
+    );
     throw new Error('Erro ao buscar detalhes do pagamento');
   }
 };
