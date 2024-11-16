@@ -3,18 +3,25 @@ import axios from 'axios';
 import { PrismaClient } from '@prisma/client';
 import * as crypto from 'crypto';
 import type { Request, Response } from 'express';
+import bodyParser from 'body-parser';
 
 const prisma = new PrismaClient();
 
+// Middleware para capturar o raw body
+const captureRawBody = bodyParser.json({
+  verify: (req: any, res, buf) => {
+    req.rawBody = buf.toString(); // Captura o corpo bruto da requisição
+  },
+});
+
 // Função para validar a assinatura do webhook
-const verifyWebhookSignature = (req: Request): boolean => {
+const verifyWebhookSignature = (req: any): boolean => {
   const secret = process.env.WEBHOOK_SECRET;
   if (!secret) {
     console.error('Segredo (WEBHOOK_SECRET) ausente no ambiente.');
     return false;
   }
 
-  // Cabeçalho x-signature
   const signatureHeader = req.headers['x-signature'] as string;
   if (!signatureHeader) {
     console.error('Cabeçalho x-signature ausente.');
@@ -23,7 +30,6 @@ const verifyWebhookSignature = (req: Request): boolean => {
 
   console.log('🚀 ~ verifyWebhookSignature ~ signatureHeader:', signatureHeader);
 
-  // Extrair timestamp (ts) e hash (v1) do cabeçalho
   const match = signatureHeader.match(/ts=(\d+),v1=([a-f0-9]+)/);
   if (!match) {
     console.error('Formato inválido no cabeçalho x-signature.');
@@ -35,16 +41,14 @@ const verifyWebhookSignature = (req: Request): boolean => {
   console.log('🚀 ~ verifyWebhookSignature ~ timestamp:', timestamp);
   console.log('🚀 ~ verifyWebhookSignature ~ receivedHash:', receivedHash);
 
-  // Recalcular o hash
-  const payload = JSON.stringify(req.body);
+  const rawBody = req.rawBody || JSON.stringify(req.body);
   const calculatedHash = crypto
     .createHmac('sha256', secret)
-    .update(`ts=${timestamp}${payload}`)
+    .update(`ts=${timestamp}${rawBody}`)
     .digest('hex');
 
   console.log('🚀 ~ verifyWebhookSignature ~ calculatedHash:', calculatedHash);
 
-  // Comparar o hash recebido com o calculado
   const isValid = receivedHash === calculatedHash;
   if (!isValid) {
     console.error('Assinatura inválida. Hash não corresponde.');
@@ -106,10 +110,7 @@ const processNotification = async (notification: any) => {
   const { type, id } = notification;
 
   if (type === 'payment') {
-    // Obtém os detalhes do pagamento usando o `id`
     const paymentDetails = await getPaymentDetails(id);
-
-    // Atualiza o status no banco de dados
     await updatePaymentStatus(paymentDetails);
   } else {
     console.log(`Tipo de notificação não suportado: ${type}`);
@@ -139,3 +140,6 @@ const updatePaymentStatus = async (paymentDetails: any) => {
     throw new Error('Erro ao atualizar status do pagamento no banco');
   }
 };
+
+// Exportar o middleware para capturar o raw body
+export { captureRawBody };
