@@ -1,10 +1,14 @@
 import express from 'express'
 import { createPayment } from '../controllers/paymentController'
+import { webHook } from '@/controllers/paymentWebHookController';
 
 const router = express.Router()
 
 // Route for creating a payment
 router.post('/', createPayment)
+
+router.post('/webhook', webHook);
+
 
 router.get('/simulate-payment', async (req, res) => {
   try {

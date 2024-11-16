@@ -1,22 +1,19 @@
-import { Payment } from 'mercadopago'
-import type { PaymentData } from '../@types/PaymentData'
-import mercadoPagoConfig from '../config/mercadoPagoConfig'
+import type { PaymentData } from '../@types/PaymentData';
+import { payment } from '../config/mercadoPagoConfig';
 
-const payment = new Payment(mercadoPagoConfig)
-
+// Service function to create a payment
 export const createPayment = async (paymentData: PaymentData) => {
-  console.log(payment)
   try {
     const response = await payment.create({
       body: paymentData,
-    })
-    return response
+    });
+    console.log("🚀 ~ createPayment ~ response:", response)
+    return response;
   } catch (error: any) {
-    // Logando erro detalhado
-    console.error('Erro ao criar pagamento:', error)
+    console.error('Erro ao criar pagamento:', error);
     if (error.response) {
-      console.error('Detalhes do erro:', error.response) // Loga a resposta do erro, caso exista
+      console.error('Detalhes do erro:', error.response); // Log detailed error response if available
     }
-    throw new Error(`Error creating payment: ${(error as Error).message}`)
+    throw new Error(`Error creating payment: ${(error as Error).message}`);
   }
-}
+};

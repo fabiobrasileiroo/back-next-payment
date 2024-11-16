@@ -9,12 +9,14 @@
   },
   "scripts": {
     "start:dev": "tsx watch src/server.ts",
+    "start:dev-env": "tsx --env-file=.env watch src/server.ts",
     "start": "node build/server.cjs",
     "build": "tsup src --out-dir build",
     "build:cloud": " npx prisma generate && npx tsup src --out-dir build && node build/server.cjs",
     "lint:format": "npx @biomejs/biome format --write ./",
     "lint": "npx @biomejs/biome lint --write ./",
-    "lint:check": "npx @biomejs/biome check --write ./"
+    "lint:check": "npx @biomejs/biome check --write ./",
+    "prismaStudio": "prisma studio"
   },
   "keywords": [
     "api",

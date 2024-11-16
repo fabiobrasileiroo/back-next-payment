@@ -15,19 +15,6 @@ generator client {
   provider = "prisma-client-js"
 }
 
-model Product {
-  id          Int       @id @default(autoincrement())
-  name        String
-  price       Float
-  description String?
-  imageUrl    String?   // Campo opcional para o link da imagem
-  companyId   Int
-  company     Company   @relation(fields: [companyId], references: [id])
-  quantity    Int
-  categoryId  Int?
-  category    Category? @relation(fields: [categoryId], references: [id])
-}
-
 model Category {
   id       Int       @id @default(autoincrement())
   name     String    @unique
@@ -40,9 +27,76 @@ model Payment {
   status           String
   payer_email      String
   payment_method   String
-  payment_id       String
+  payment_id       String @unique
   createdAt        DateTime @default(now())
 }
+model Order {
+  id          Int           @id @default(autoincrement())
+  user        User          @relation(fields: [userId], references: [id])
+  userId      Int
+  totalAmount Float
+  status      OrderStatus    @default(PENDING) // Status do pedido como um todo
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  items       OrderItem[]    // Relação com os itens do pedido
+}
+
+model OrderItem {
+  id           Int          @id @default(autoincrement())
+  order        Order        @relation(fields: [orderId], references: [id])
+  orderId      Int
+  product      Product      @relation(fields: [productId], references: [id])
+  productId    Int
+  quantity     Int          // Quantidade do produto no pedido
+  unitPrice    Float        // Preço unitário do produto no momento do pedido
+  totalPrice   Float        // Preço total para essa quantidade do produto
+  paymentStatus PaymentStatus @default(PROCESSING) // Status de pagamento do item
+}
+
+
+model User {
+  id           Int      @id @default(autoincrement())
+  email        String   @unique
+  name         String
+  password     String
+  role         UserRole @default(PENDING)
+  proposal     Proposal? @relation(name: "ProposalToUser")
+  company      Company? @relation(fields: [companyId], references: [id])
+  companyId    Int?
+  orders       Order[]  // Relação inversa com os pedidos
+  imageUrl             String?   // Novo campo para armazenar a URL da imagem do usuário
+
+  // Novos campos para redefinição de senha
+  passwordResetToken   String?
+  passwordResetExpires DateTime?
+}
+
+model Product {
+  id          Int       @id @default(autoincrement())
+  name        String
+  price       Float
+  description String?
+  imageUrl    String?   // Campo opcional para o link da imagem
+  companyId   Int
+  company     Company   @relation(fields: [companyId], references: [id])
+  quantity    Int
+  categoryId  Int?
+  category    Category? @relation(fields: [categoryId], references: [id])
+  orderItems  OrderItem[] // Relação inversa com os itens do pedido
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  FAILED
+}
+
+enum PaymentStatus {
+  PAID
+  FAILED
+  PROCESSING
+}
+
 
 model Company {
   id       Int      @id @default(autoincrement())
@@ -76,21 +130,6 @@ model Proposal {
   unit            Unit?     @relation(fields: [unitId], references: [id])
 }
 
-model User {
-  id           Int      @id @default(autoincrement())
-  email        String   @unique
-  name         String
-  password     String
-  role         UserRole @default(PENDING)
-  proposal     Proposal? @relation(name: "ProposalToUser")
-  company      Company? @relation(fields: [companyId], references: [id])
-  companyId    Int?
-  imageUrl             String?   // Novo campo para armazenar a URL da imagem do usuário
-
-  // Novos campos para redefinição de senha
-  passwordResetToken   String?
-  passwordResetExpires DateTime?
-}
 
 enum ProposalStatus {
   PENDING
