@@ -10,8 +10,10 @@ const prisma = new PrismaClient();
 // Função para validar a assinatura do webhook
 const verifyWebhookSignature = (req: Request): boolean => {
   const secret = process.env.WEBHOOK_SECRET;
+  console.log("🚀 ~ verifyWebhookSignature ~ secret:", secret)
   const payload = JSON.stringify(req.body);
   const signature = req.headers['x-mercadopago-signature'] as string;
+  console.log("🚀 ~ verifyWebhookSignature ~ signature:", signature)
 
   if (!secret || !signature) {
     console.error('Assinatura ou segredo ausentes');
