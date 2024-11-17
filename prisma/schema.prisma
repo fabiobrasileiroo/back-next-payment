@@ -135,6 +135,7 @@ enum ProposalStatus {
   REJECTED
 }
 
+
 enum UserRole {
   PENDING
   USER
