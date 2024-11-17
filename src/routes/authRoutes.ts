@@ -17,5 +17,4 @@ authRoutes.post('/login', login)
 authRoutes.post('/forgot-password', forgotPassword)
 authRoutes.post('/reset-password', resetPassword)
 
-
 export default authRoutes

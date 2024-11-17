@@ -52,7 +52,7 @@ export const forgotPassword = async (req: Request, res: Response) => {
     const mailOptions = {
       from: process.env.SMTP_USER,
       to: email,
-      subject: "Solicitação de Redefinição de Senha",
+      subject: 'Solicitação de Redefinição de Senha',
       html: `
     <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; background-color: #f4f4f4; padding: 20px; border-radius: 10px; max-width: 600px; margin: 0 auto; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);">
       <div style="text-align: center; margin-bottom: 20px;">
@@ -71,7 +71,7 @@ export const forgotPassword = async (req: Request, res: Response) => {
       <p style="font-weight: bold; color: #320B4E;">Next Payment</p>
     </div>
   `,
-    };
+    }
 
     // Log the email sending step for debugging purposes
     console.log('Sending reset password email to:', email)

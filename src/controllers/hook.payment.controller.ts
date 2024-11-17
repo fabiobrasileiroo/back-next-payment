@@ -1,67 +1,77 @@
-import 'dotenv/config';
-import axios from 'axios';
-import { PrismaClient } from '@prisma/client';
-import * as crypto from 'crypto';
-import type { Request, Response } from 'express';
-import bodyParser from 'body-parser';
+import 'dotenv/config'
+import axios from 'axios'
+import * as crypto from 'crypto'
+import { Request, Response } from 'express'
+import { PrismaClient } from '@prisma/client'
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient()
 
-// Middleware para capturar o raw body
-const captureRawBody = bodyParser.json({
-  verify: (req: any, res, buf) => {
-    req.rawBody = buf.toString(); // Captura o corpo bruto da requisição
-  },
-});
+// Function to validate the webhook signature
+const verifyWebhookSignature = (req: Request): boolean => {
+  // console.log("🚀 ~ verifyWebhookSignature ~ req:", req);
 
-// Função para validar a assinatura do webhook
-const verifyWebhookSignature = (req: any): boolean => {
-  const secret = process.env.WEBHOOK_SECRET;
+  const secret = process.env.WEBHOOK_SECRET
   if (!secret) {
-    console.error('Segredo (WEBHOOK_SECRET) ausente no ambiente.');
-    return false;
+    console.error('Segredo (WEBHOOK_SECRET) ausente no ambiente.')
+    return false
   }
 
-  const signatureHeader = req.headers['x-signature'] as string;
-  const xRequestId = req.headers['x-request-id'] as string;
+  const signatureHeader = req.headers['x-signature'] as string
+  const xRequestId = req.headers['x-request-id'] as string
+
   if (!signatureHeader || !xRequestId) {
-    console.error('Cabeçalhos x-signature ou x-request-id ausentes.');
-    return false;
+    console.error('Cabeçalhos x-signature ou x-request-id ausentes.')
+    return false
   }
 
-  console.log('🚀 ~ verifyWebhookSignature ~ signatureHeader:', signatureHeader);
-
-  const match = signatureHeader.match(/ts=(\d+),v1=([a-f0-9]+)/);
+  // Extract ts and v1 from x-signature header
+  const match = signatureHeader.match(/^ts=(\d+),v1=([a-f0-9]+)$/)
   if (!match) {
-    console.error('Formato inválido no cabeçalho x-signature.');
-    return false;
+    console.error('Formato inválido no cabeçalho x-signature.')
+    return false
   }
 
-  const [, timestamp, receivedHash] = match;
-  const rawBody = req.rawBody || JSON.stringify(req.body);
+  const [, timestamp, receivedHash] = match
+  const notificationId = req.query['id'] || req.query['data.id'] || req.body.id
+  if (!notificationId) {
+    console.error('notificationId ausente.')
+    return false
+  }
 
-  const manifest = `id:${req.query['data.id']};request-id:${xRequestId};ts:${timestamp};${rawBody}`;
+  console.log('🚀 ~ verifyWebhookSignature ~ notificationId:', notificationId)
+  console.log('🚀 ~ verifyWebhookSignature ~ xRequestId:', xRequestId)
+
+  // Timestamp validation (optional)
+  // const TOLERANCE_IN_SECONDS = 300; // 5 minutos
+  // const currentTimestamp = Math.floor(Date.now() / 1000); // Em segundos
+  // if (Math.abs(currentTimestamp - parseInt(timestamp, 10)) > TOLERANCE_IN_SECONDS) {
+  //   console.error('Timestamp fora do intervalo de tolerância.');
+  //   return false;
+  // }
+
+  // Compose the manifest string for validation
+  const manifest = `id:${notificationId};request-id:${xRequestId};ts:${timestamp};`
+  console.log('🚀 ~ verifyWebhookSignature ~ manifest:', manifest)
+
+  // Generate the HMAC hash
   const calculatedHash = crypto
     .createHmac('sha256', secret)
     .update(manifest)
-    .digest('hex');
+    .digest('hex')
 
-  console.log('🚀 ~ verifyWebhookSignature ~ calculatedHash:', calculatedHash);
+  console.log('Calculated Hash:', calculatedHash)
+  console.log('Received Hash:', receivedHash)
 
-  const isValid = receivedHash === calculatedHash;
-  if (!isValid) {
-    console.error('Assinatura inválida. Hash não corresponde.');
-  }
+  console.log(calculatedHash === receivedHash)
+  return calculatedHash === receivedHash
+}
 
-  return isValid;
-};
-
-// Função para buscar detalhes do pagamento pelo ID
+// Function to fetch payment details by ID
 const getPaymentDetails = async (paymentId: string) => {
   try {
-    const accessToken = process.env.MERCADO_PAGO_ACCESS_TOKEN;
+    const accessToken = process.env.PROD_ACCESS_TOKEN
     if (!accessToken) {
-      throw new Error('Access token não configurado.');
+      throw new Error('Access token não configurado.')
     }
 
     const response = await axios.get(
@@ -71,81 +81,138 @@ const getPaymentDetails = async (paymentId: string) => {
           Authorization: `Bearer ${accessToken}`,
         },
       }
-    );
+    )
 
-    console.log('Detalhes do pagamento:', response.data);
-    return response.data;
+    return response.data
   } catch (error) {
-    console.error(
-      'Erro ao buscar detalhes do pagamento:',
-      (error as any).response?.data || (error as Error).message
-    );
-    throw new Error('Erro ao buscar detalhes do pagamento');
+    if (axios.isAxiosError(error)) {
+      if (error.response?.status === 404) {
+        console.warn(`Pagamento ${paymentId} não encontrado.`)
+        return null // Retornar null se não encontrado
+      }
+      console.error(
+        'Erro Axios ao buscar detalhes do pagamento:',
+        error.response?.data || error.message
+      )
+    } else {
+      console.error('Erro desconhecido ao buscar detalhes do pagamento:', error)
+    }
+    throw new Error('Erro ao buscar detalhes do pagamento')
   }
-};
+}
 
-// Função principal do webhook
+// Webhook handler
 export const webHook = async (req: Request, res: Response) => {
   try {
-    // Validação da assinatura
     if (!verifyWebhookSignature(req)) {
-      return res.status(403).send('Assinatura inválida');
+      return res.status(403).send('Assinatura inválida')
     }
 
-    const notification = req.body;
-    console.log('Notificação recebida:', notification);
+    const notification = req.body
+    console.log('Notificação recebida:', notification)
 
-    // Confirma recebimento para o Mercado Pago
-    res.status(200).send('OK');
+    res.status(200).send('OK') // Confirm receipt
 
-    // Processar a notificação recebida de forma assíncrona
-    processNotification(notification).catch((err) =>
+    processNotification(notification).catch(err =>
       console.error('Erro ao processar notificação:', err)
-    );
+    )
   } catch (error) {
-    console.error('Erro ao processar notificação:', (error as Error).message);
-    res.status(500).send('Erro ao processar notificação');
+    console.error(
+      'Erro ao processar notificação:',
+      error instanceof Error ? error.message : error
+    )
+    res.status(500).send('Erro ao processar notificação')
   }
-};
+}
 
-// Função para processar as notificações recebidas
+// Process notification
 const processNotification = async (notification: any) => {
-  const { type, id } = notification;
+  try {
+    const notificationId = notification.data.id
+    const topic = notification.type
+    console.log('127 - 🚀 ~ processNotification ~ topic:', topic)
 
-  if (type === 'payment') {
-    const paymentDetails = await getPaymentDetails(id);
-    await updatePaymentStatus(paymentDetails);
-  } else if (type === 'merchant_order') {
-    console.log('Notificação de merchant order recebida:', notification);
-    // Processar a lógica de merchant_order aqui, se necessário
-  } else {
-    console.log(`Tipo de notificação não suportado: ${type}`);
+    if (!notificationId || !topic) {
+      throw new Error('Notificação incompleta: ID ou tipo ausente.')
+    }
+
+    if (topic === 'payment') {
+      const paymentDetails = await getPaymentDetails(notificationId)
+      if (paymentDetails) {
+        await updatePaymentStatus(paymentDetails)
+      } else {
+        console.warn(
+          `Detalhes do pagamento não encontrados para ID: ${notificationId}`
+        )
+      }
+    } else if (topic === 'merchant_order') {
+      console.log('Notificação de merchant order recebida:', notification)
+      // Custom logic for merchant orders
+    } else {
+      console.warn(`Tipo de notificação não suportado: ${topic}`)
+    }
+  } catch (error) {
+    console.error(
+      'Erro ao processar notificação:',
+      error instanceof Error ? error.message : error
+    )
+    throw error // Repassar erro para logs adicionais
   }
-};
+}
 
-// Função para atualizar o status do pagamento no banco de dados
 const updatePaymentStatus = async (paymentDetails: any) => {
   try {
-    const { id, status, transaction_amount, payer, payment_type_id } = paymentDetails;
+    const {
+      id: paymentId,
+      status,
+      transaction_amount,
+      payer,
+      payment_type_id,
+    } = paymentDetails
 
-    await prisma.payment.upsert({
-      where: { payment_id: id },
-      update: { status, transaction_amount },
-      create: {
-        payment_id: id,
-        status,
-        transaction_amount,
-        payer_email: payer.email,
-        payment_method: payment_type_id,
-      },
-    });
+    console.log('Atualizando status no banco:', {
+      payment_id: paymentId,
+      status,
+      transaction_amount,
+      payer_email: payer?.email || 'N/A',
+      payment_method: payment_type_id,
+    })
 
-    console.log('Status do pagamento atualizado no banco');
+    // Verificar se o pagamento já existe no banco
+    const existingPayment = await prisma.payment.findUnique({
+      where: { payment_id: BigInt(paymentId) }, // Converter o id recebido para BigInt
+    })
+
+    if (existingPayment) {
+      // Atualizar pagamento existente
+      await prisma.payment.update({
+        where: { payment_id: BigInt(paymentId) },
+        data: {
+          status,
+          transaction_amount,
+          payer_email: payer?.email || 'N/A',
+          payment_method: payment_type_id,
+        },
+      })
+      console.log(`Pagamento ${paymentId} atualizado com sucesso.`)
+    } else {
+      // Criar novo registro de pagamento
+      await prisma.payment.create({
+        data: {
+          payment_id: BigInt(paymentId), // Certifique-se de salvar como BigInt
+          status,
+          transaction_amount,
+          payer_email: payer?.email || 'N/A',
+          payment_method: payment_type_id,
+        },
+      })
+      console.log(`Pagamento ${paymentId} criado com sucesso.`)
+    }
   } catch (error) {
-    console.error('Erro ao atualizar status no banco:', (error as Error).message);
-    throw new Error('Erro ao atualizar status do pagamento no banco');
+    console.error(
+      'Erro ao atualizar ou criar pagamento no banco:',
+      error instanceof Error ? error.message : error
+    )
+    throw new Error('Erro ao atualizar ou criar pagamento no banco.')
   }
-};
-
-// Exportar o middleware para capturar o raw body
-export { captureRawBody };
+}

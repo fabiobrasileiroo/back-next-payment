@@ -6,7 +6,7 @@ import * as productService from '../services/productService'
 import { DEFAULT_IMAGE_URL } from '@/assets/noImage'
 import { PrismaClient } from '@prisma/client'
 
-const prisma = new PrismaClient
+const prisma = new PrismaClient()
 
 export const createProduct = async (req: Request, res: Response) => {
   try {
@@ -51,7 +51,11 @@ export const createProduct = async (req: Request, res: Response) => {
     }
 
     // Cria o produto com a empresa associada
-    const createdProduct = await productService.createProduct(productData, companyId, categoryId)
+    const createdProduct = await productService.createProduct(
+      productData,
+      companyId,
+      categoryId
+    )
     res.status(201).json(createdProduct)
   } catch (error) {
     res.status(500).json({ message: (error as Error).message })
@@ -81,7 +85,6 @@ export const getProductsByCategory = async (req: Request, res: Response) => {
     res.status(500).json({ message: (error as Error).message })
   }
 }
-
 
 export const getProductById = async (req: Request, res: Response) => {
   try {
@@ -129,23 +132,23 @@ export const deleteProduct = async (req: Request, res: Response) => {
 }
 export const deleteProducts = async (req: Request, res: Response) => {
   try {
-    const ids = req.body.ids; // Recebe o array de IDs
+    const ids = req.body.ids // Recebe o array de IDs
     if (!ids || !Array.isArray(ids)) {
-      return res.status(400).json({ message: 'Array de IDs inválido' });
+      return res.status(400).json({ message: 'Array de IDs inválido' })
     }
-    
-    await productService.deleteProducts(ids);
-    res.status(204).end();
+
+    await productService.deleteProducts(ids)
+    res.status(204).end()
   } catch (error) {
-    res.status(500).json({ message: (error as Error).message });
+    res.status(500).json({ message: (error as Error).message })
   }
 }
 
 export const decrease = async (req: Request, res: Response) => {
   const { id } = req.params
-  console.log("🚀 ~ decrease ~ id:", id)
+  console.log('🚀 ~ decrease ~ id:', id)
   const { quantity } = req.body // Quantidade a ser diminuída
-  console.log("🚀 ~ decrease ~ quantity:", quantity)
+  console.log('🚀 ~ decrease ~ quantity:', quantity)
 
   try {
     const updatedProduct = await productService.decreaseProductQuantity(

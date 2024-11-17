@@ -18,10 +18,12 @@ export const createOrUpdateCategory = async (name: string) => {
   return category
 }
 
-
-
 // Função para criar um produto com o ID da empresa e a categoria associados
-export const createProduct = async (productData: Prisma.ProductCreateInput, companyId: number, categoryId?: number) => {
+export const createProduct = async (
+  productData: Prisma.ProductCreateInput,
+  companyId: number,
+  categoryId?: number
+) => {
   return prisma.product.create({
     data: {
       name: productData.name,
@@ -65,7 +67,6 @@ export const getProductsByCategory = async (categoryId: number) => {
     },
   })
 }
-
 
 export const getProductById = async (id: number) => {
   return prisma.product.findUnique({
@@ -119,12 +120,11 @@ export const updateProduct = async (
       imageUrl: productData.imageUrl,
       quantity: productData.quantity,
       category: categoryConnect, // Conecta a categoria, se fornecida
-      company: companyConnect,   // Conecta a empresa, se fornecida
+      company: companyConnect, // Conecta a empresa, se fornecida
     },
     include: { category: true, company: true }, // Inclui a categoria e a empresa nos resultados
   })
 }
-
 
 export const deleteProduct = async (id: number) => {
   // Verifica se o produto existe
@@ -146,19 +146,17 @@ export const deleteProducts = async (ids: number[]) => {
   // Verifica se os produtos existem
   const products = await prisma.product.findMany({
     where: { id: { in: ids } },
-  });
+  })
 
   if (products.length !== ids.length) {
-    throw new Error('Um ou mais produtos não foram encontrados');
+    throw new Error('Um ou mais produtos não foram encontrados')
   }
 
   // Deleta os produtos
   return prisma.product.deleteMany({
     where: { id: { in: ids } },
-  });
-};
-
-
+  })
+}
 
 export const increaseProductQuantity = async (
   productId: number,

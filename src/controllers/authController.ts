@@ -21,36 +21,36 @@ export const register = async (req: Request, res: Response) => {
     companyDocument,
     proposalValue,
     unitName,
-    imageUrl // Adicionado para receber a imagem em base64
-  } = req.body;
-    console.log("🚀 ~ register ~ imageUrl:", imageUrl)
+    imageUrl, // Adicionado para receber a imagem em base64
+  } = req.body
+  console.log('🚀 ~ register ~ imageUrl:', imageUrl)
 
   try {
     // Verificar se o usuário já existe
     const existingUser = await prisma.user.findUnique({
       where: { email },
-    });
+    })
 
     if (existingUser) {
-      return res.status(400).json({ message: 'User already exists' });
+      return res.status(400).json({ message: 'User already exists' })
     }
 
     // Verificar se a empresa já existe
     const existingCompany = await prisma.company.findUnique({
       where: { document: companyDocument },
-    });
+    })
 
-    let companyId: number;
+    let companyId: number
 
     if (!existingCompany) {
       // Criar a empresa se não existir
       const newCompany = await companyService.createCompany({
         name: companyName,
         document: companyDocument,
-      });
-      companyId = newCompany.id;
+      })
+      companyId = newCompany.id
     } else {
-      companyId = existingCompany.id;
+      companyId = existingCompany.id
     }
 
     // Verificar ou criar a unidade da empresa
@@ -59,7 +59,7 @@ export const register = async (req: Request, res: Response) => {
         name: unitName,
         companyId: companyId,
       },
-    });
+    })
 
     if (!unit) {
       // Criar unidade se não existir
@@ -68,16 +68,16 @@ export const register = async (req: Request, res: Response) => {
           name: unitName,
           company: { connect: { id: companyId } },
         },
-      });
+      })
     }
 
     console.log('chego no 73')
     // Processar o upload da imagem, se fornecida
-    let uploadedImageUrl = DEFAULT_IMAGE_URL;
+    let uploadedImageUrl = DEFAULT_IMAGE_URL
     if (imageUrl) {
       try {
-      console.log('chego no 78')
-        const base64Image = imageUrl.replace(/^data:image\/\w+;base64,/, '');
+        console.log('chego no 78')
+        const base64Image = imageUrl.replace(/^data:image\/\w+;base64,/, '')
         const response = await axios.post(
           'https://api.imgbb.com/1/upload',
           {
@@ -89,17 +89,17 @@ export const register = async (req: Request, res: Response) => {
               'Content-Type': 'application/x-www-form-urlencoded',
             },
           }
-        );
+        )
         console.log('dentro imgBB')
-        uploadedImageUrl = response.data.data.url;
+        uploadedImageUrl = response.data.data.url
       } catch (uploadError) {
-        console.error('Erro ao fazer upload da imagem:', uploadError);
+        console.error('Erro ao fazer upload da imagem:', uploadError)
       }
     }
-      console.log('chego no 97')
+    console.log('chego no 97')
 
     // Criptografar a senha
-    const hashedPassword = await bcrypt.hash(password, saltRounds);
+    const hashedPassword = await bcrypt.hash(password, saltRounds)
 
     // Criar o usuário associado à proposta
     const newUser = await prisma.user.create({
@@ -111,7 +111,7 @@ export const register = async (req: Request, res: Response) => {
         companyId: companyId, // Associar o usuário à empresa
         imageUrl: uploadedImageUrl, // Salvar a URL da imagem
       },
-    });
+    })
 
     // Criar a proposta de usuário
     const newProposal = await prisma.proposal.create({
@@ -122,18 +122,18 @@ export const register = async (req: Request, res: Response) => {
         unitId: unit.id, // Associar a unidade à proposta
         userId: newUser.id, // Associar a proposta ao usuário criado
       },
-    });
+    })
 
     res.status(201).json({
       message: 'User and proposal created, pending approval',
       user: newUser,
       proposal: newProposal,
-    });
+    })
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Server error' });
+    console.error(error)
+    res.status(500).json({ message: 'Server error' })
   }
-};
+}
 
 // Função de login de usuário
 
@@ -154,9 +154,21 @@ const getMenuForRole = (role: any) => {
             // Admin-only routes
             ...(role === UserRole.ADMIN
               ? [
-                  { label: 'Add Product', route: '/products/add', adminOnly: true },
-                  { label: 'Edit Product', route: '/products/edit', adminOnly: true },
-                  { label: 'Delete Product', route: '/products/delete', adminOnly: true },
+                  {
+                    label: 'Add Product',
+                    route: '/products/add',
+                    adminOnly: true,
+                  },
+                  {
+                    label: 'Edit Product',
+                    route: '/products/edit',
+                    adminOnly: true,
+                  },
+                  {
+                    label: 'Delete Product',
+                    route: '/products/delete',
+                    adminOnly: true,
+                  },
                 ]
               : []),
           ],
@@ -203,39 +215,39 @@ const getMenuForRole = (role: any) => {
         },
       ],
     },
-  ];
+  ]
 
-  return menu;
-};
+  return menu
+}
 
 // User login function with the updated menu format
 export const login = async (req: Request, res: Response) => {
-  const { email, password } = req.body;
+  const { email, password } = req.body
 
   try {
     // Check if the user exists
     const user = await prisma.user.findUnique({
       where: { email },
-    });
+    })
 
     if (!user) {
-      return res.status(401).json({ message: 'Invalid credentials' });
+      return res.status(401).json({ message: 'Invalid credentials' })
     }
 
     // Verify if the user's proposal is approved
     const proposal = await prisma.proposal.findUnique({
       where: { userId: user.id },
-    });
+    })
 
     if (!proposal || proposal.status !== 'APPROVED') {
-      return res.status(403).json({ message: 'Proposal is not approved' });
+      return res.status(403).json({ message: 'Proposal is not approved' })
     }
 
     // Verify if the password is correct
-    const isPasswordValid = await bcrypt.compare(password, user.password);
+    const isPasswordValid = await bcrypt.compare(password, user.password)
 
     if (!isPasswordValid) {
-      return res.status(401).json({ message: 'Invalid credentials' });
+      return res.status(401).json({ message: 'Invalid credentials' })
     }
 
     // Generate JWT token
@@ -243,10 +255,10 @@ export const login = async (req: Request, res: Response) => {
       { id: user.id, email: user.email, role: user.role },
       process.env.JWT_SECRET || 'your_jwt_secret',
       { expiresIn: '1d' }
-    );
+    )
 
     // Get the menu for the user's role
-    const menu = getMenuForRole(user.role);
+    const menu = getMenuForRole(user.role)
 
     // Return the token, user information, and menu
     res.status(200).json({
@@ -261,9 +273,9 @@ export const login = async (req: Request, res: Response) => {
         role: user.role,
       },
       menu, // Include the menu in the response
-    });
+    })
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Server error' });
+    console.error(error)
+    res.status(500).json({ message: 'Server error' })
   }
-};
+}

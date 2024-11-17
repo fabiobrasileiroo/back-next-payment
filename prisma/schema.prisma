@@ -22,67 +22,77 @@ model Category {
 }
 
 model Payment {
-  id               Int      @id @default(autoincrement())
+  id                 Int      @id @default(autoincrement())
   transaction_amount Float
-  status           String
-  payer_email      String
-  payment_method   String
-  payment_id       String @unique
-  createdAt        DateTime @default(now())
-}
-model Order {
-  id          Int           @id @default(autoincrement())
-  user        User          @relation(fields: [userId], references: [id])
-  userId      Int
-  totalAmount Float
-  status      OrderStatus    @default(PENDING) // Status do pedido como um todo
-  createdAt   DateTime       @default(now())
-  updatedAt   DateTime       @updatedAt
-  items       OrderItem[]    // Relação com os itens do pedido
-}
-
-model OrderItem {
-  id           Int          @id @default(autoincrement())
-  order        Order        @relation(fields: [orderId], references: [id])
-  orderId      Int
-  product      Product      @relation(fields: [productId], references: [id])
-  productId    Int
-  quantity     Int          // Quantidade do produto no pedido
-  unitPrice    Float        // Preço unitário do produto no momento do pedido
-  totalPrice   Float        // Preço total para essa quantidade do produto
-  paymentStatus PaymentStatus @default(PROCESSING) // Status de pagamento do item
-}
-
-
-model User {
-  id           Int      @id @default(autoincrement())
-  email        String   @unique
-  name         String
-  password     String
-  role         UserRole @default(PENDING)
-  proposal     Proposal? @relation(name: "ProposalToUser")
-  company      Company? @relation(fields: [companyId], references: [id])
-  companyId    Int?
-  orders       Order[]  // Relação inversa com os pedidos
-  imageUrl             String?   // Novo campo para armazenar a URL da imagem do usuário
-
-  // Novos campos para redefinição de senha
-  passwordResetToken   String?
-  passwordResetExpires DateTime?
+  status             String
+  payer_email        String
+  payment_method     String
+  payment_id         BigInt   @unique
+  createdAt          DateTime @default(now())
+  product            Product? @relation(fields: [productId], references: [id])
+  productId          Int?
 }
 
 model Product {
-  id          Int       @id @default(autoincrement())
+  id          Int         @id @default(autoincrement())
   name        String
   price       Float
   description String?
-  imageUrl    String?   // Campo opcional para o link da imagem
+  imageUrl    String?
   companyId   Int
-  company     Company   @relation(fields: [companyId], references: [id])
+  company     Company     @relation(fields: [companyId], references: [id])
   quantity    Int
   categoryId  Int?
-  category    Category? @relation(fields: [categoryId], references: [id])
-  orderItems  OrderItem[] // Relação inversa com os itens do pedido
+  category    Category?   @relation(fields: [categoryId], references: [id])
+  orderItems  OrderItem[]
+  payments    Payment[] // Added relation to Payment
+}
+
+model Company {
+  id       Int       @id @default(autoincrement())
+  name     String    @unique
+  document String    @unique
+  users    User[]
+  units    Unit[]
+  products Product[]
+}
+
+model Order {
+  id          Int         @id @default(autoincrement())
+  user        User        @relation(fields: [userId], references: [id])
+  userId      Int
+  totalAmount Float
+  status      OrderStatus @default(PENDING)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  items       OrderItem[]
+}
+
+model OrderItem {
+  id            Int           @id @default(autoincrement())
+  order         Order         @relation(fields: [orderId], references: [id])
+  orderId       Int
+  product       Product       @relation(fields: [productId], references: [id])
+  productId     Int
+  quantity      Int
+  unitPrice     Float
+  totalPrice    Float
+  paymentStatus PaymentStatus @default(PROCESSING)
+}
+
+model User {
+  id                   Int       @id @default(autoincrement())
+  email                String    @unique
+  name                 String
+  password             String
+  role                 UserRole  @default(PENDING)
+  proposal             Proposal? @relation(name: "ProposalToUser")
+  company              Company?  @relation(fields: [companyId], references: [id])
+  companyId            Int?
+  orders               Order[]
+  imageUrl             String?
+  passwordResetToken   String?
+  passwordResetExpires DateTime?
 }
 
 enum OrderStatus {
@@ -97,39 +107,27 @@ enum PaymentStatus {
   PROCESSING
 }
 
-
-model Company {
-  id       Int      @id @default(autoincrement())
-  name     String   @unique
-  document String   @unique
-  users    User[]   // Relação com os usuários
-  units    Unit[]
-  products Product[]
-}
-
 model Unit {
-  id          Int      @id @default(autoincrement())
-  name        String
-  company     Company  @relation(fields: [companyId], references: [id])
-  companyId   Int
-  pixKey      String?  // Chave PIX opcional da unidade
-  Proposal    Proposal[]
+  id        Int        @id @default(autoincrement())
+  name      String
+  company   Company    @relation(fields: [companyId], references: [id])
+  companyId Int
+  pixKey    String?
+  Proposal  Proposal[]
 }
-
 
 model Proposal {
-  id              Int       @id @default(autoincrement())
+  id              Int            @id @default(autoincrement())
   companyName     String
   companyDocument String
-  user            User      @relation(fields: [userId], references: [id], name: "ProposalToUser")
-  userId          Int       @unique
+  user            User           @relation(fields: [userId], references: [id], name: "ProposalToUser")
+  userId          Int            @unique
   status          ProposalStatus @default(PENDING)
-  createdAt       DateTime  @default(now())
+  createdAt       DateTime       @default(now())
   proposalValue   Float
-  unitId          Int?      // Unidade da empresa relacionada a esta proposta
-  unit            Unit?     @relation(fields: [unitId], references: [id])
+  unitId          Int?
+  unit            Unit?          @relation(fields: [unitId], references: [id])
 }
-
 
 enum ProposalStatus {
   PENDING
@@ -138,7 +136,7 @@ enum ProposalStatus {
 }
 
 enum UserRole {
-  PENDING  // Usuários que ainda não foram aprovados
+  PENDING
   USER
   ADMIN
 }

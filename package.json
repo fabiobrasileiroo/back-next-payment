@@ -18,10 +18,7 @@
     "lint:check": "npx @biomejs/biome check --write ./",
     "prismaStudio": "prisma studio"
   },
-  "keywords": [
-    "api",
-    "api gateway"
-  ],
+  "keywords": ["api", "api gateway"],
   "author": "fabio",
   "license": "MIT",
   "dependencies": {
@@ -29,6 +26,7 @@
     "@prisma/client": "^5.19.1",
     "axios": "1.7.7",
     "bcrypt": "5.1.1",
+    "body-parser": "1.20.3",
     "cors": "2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.21.0",
@@ -41,6 +39,7 @@
   },
   "devDependencies": {
     "@types/bcrypt": "5.0.2",
+    "@types/content-type": "1.1.8",
     "@types/cors": "2.8.17",
     "@types/express": "4.17.21",
     "@types/jsonwebtoken": "9.0.6",

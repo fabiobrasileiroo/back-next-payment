@@ -15,21 +15,21 @@ app.use(express.json())
 
 app.use(cors())
 
-
 // Middleware para rastrear requisições
 app.use((req, res, next) => {
-  console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
-  next();
-});
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`)
+  next()
+})
 
 // Middleware para rastrear respostas
 app.use((req, res, next) => {
   res.on('finish', () => {
-    console.log(`[${new Date().toISOString()}] ${res.statusCode} ${req.method} ${req.url}`);
-  });
-  next();
-});
-
+    console.log(
+      `[${new Date().toISOString()}] ${res.statusCode} ${req.method} ${req.url}`
+    )
+  })
+  next()
+})
 
 app.get('/', (_req, res) => {
   res.send('🚀 Api next payment funcionando atualizado?')
