@@ -1,4 +1,6 @@
+
 import 'dotenv/config'
+
 import { PrismaClient, UserRole } from '@prisma/client' // Importação do enum UserRole
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
@@ -150,25 +152,25 @@ const getMenuForRole = (role: any) => {
           route: '/products',
           children: [
             { label: 'View Products', route: '/products/view' },
-            { label: 'Categories', route: '/products/categories' },
+            // { label: 'Categories', route: '/products/categories' },
             // Admin-only routes
             ...(role === UserRole.ADMIN
               ? [
                   {
-                    label: 'Add Product',
+                    label: 'Gerenciamento de produtos',
                     route: '/products/add',
                     adminOnly: true,
                   },
                   {
-                    label: 'Edit Product',
+                    label: 'Pagamentos',
                     route: '/products/edit',
                     adminOnly: true,
                   },
-                  {
-                    label: 'Delete Product',
-                    route: '/products/delete',
-                    adminOnly: true,
-                  },
+                  // {
+                  //   label: 'Delete Product',
+                  //   route: '/products/delete',
+                  //   adminOnly: true,
+                  // },
                 ]
               : []),
           ],

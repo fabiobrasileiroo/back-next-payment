@@ -216,3 +216,29 @@ const updatePaymentStatus = async (paymentDetails: any) => {
     throw new Error('Erro ao atualizar ou criar pagamento no banco.')
   }
 }
+export const checkPaymentStatus = async (req:Request, res: Response) => {
+  const paymentId = req.params.paymentId;
+  const accessToken = process.env.PROD_ACCESS_TOKEN;
+
+  if (!accessToken) {
+    return res.status(500).json({ error: 'Access token não configurado.' });
+  }
+
+  try {
+    const response = await axios.get(
+      `https://api.mercadopago.com/v1/payments/${paymentId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+
+    // Retorna o status do pagamento para o frontend
+    const { status, status_detail } = response.data;
+    res.json({ status, status_detail });
+  } catch (error) {
+    console.error('Erro ao verificar status do pagamento:', (error as Error).message);
+    res.status(500).json({ error: 'Erro ao verificar status do pagamento.' });
+  }
+}

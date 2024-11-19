@@ -1,6 +1,6 @@
 import express from 'express'
 import { createPayment } from '../controllers/paymentController'
-import { webHook } from '@/controllers/hook.payment.controller'
+import { checkPaymentStatus, webHook } from '@/controllers/hook.payment.controller'
 
 const router = express.Router()
 
@@ -9,15 +9,7 @@ router.post('/', createPayment)
 
 router.post('/webhook', webHook)
 
-router.get('/simulate-payment', async (req, res) => {
-  try {
-    // Chamando a função de simulação de pagamento PIX
-    // await simulatePixPayment();
-    res.send('Simulação de pagamento com PIX realizada com sucesso!')
-  } catch (error) {
-    console.error('Erro ao simular o pagamento:', error)
-    res.status(500).send('Erro ao simular pagamento')
-  }
-})
+// Endpoint para verificar o status do pagamento
+router.get('/check-payment-status/:paymentId', checkPaymentStatus);
 
 export default router
