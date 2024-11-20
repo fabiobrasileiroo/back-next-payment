@@ -82,3 +82,37 @@ export const storePayment = async (paymentResponse: any, productId: number) => {
     throw new Error('Erro ao salvar pagamento no banco')
   }
 }
+// Extensão do BigInt para TypeScript
+declare global {
+  interface BigInt {
+    toJSON: () => string;
+  }
+}
+export const getPayments = async (req: Request, res: Response) => {
+  // Corrigindo a serialização do BigInt para JSON
+  BigInt.prototype.toJSON = function () {
+    // Convertendo BigInt para string para evitar perda de dados
+    return this.toString();
+  };
+
+  try {
+    // Obtendo os pagamentos
+    const products = await paymentService.getPayments();
+    console.log("🚀 ~ getPayments ~ products:", products);
+
+    // Convertendo o campo 'payment_id' (assumindo que seja BigInt) para string dentro de cada item
+    const productsString = products.map((product: any) => ({
+      ...product,
+      payment_id: product.payment_id.toString(), // Convertendo explicitamente
+    }));
+
+    console.log("🚀 ~ getPayments ~ productsString:", productsString);
+
+    // Enviando a resposta
+    res.status(200).json(productsString);
+  } catch (error) {
+    // Tratando erros de forma genérica
+    console.error("Erro ao obter os pagamentos:", error);
+    res.status(500).json({ message: (error as Error).message });
+  }
+};

@@ -1,4 +1,3 @@
-
 import 'dotenv/config'
 
 import { PrismaClient, UserRole } from '@prisma/client' // Importação do enum UserRole
@@ -163,12 +162,12 @@ const getMenuForRole = (role: any) => {
                   },
                   {
                     label: 'Pagamentos',
-                    route: '/products/edit',
+                    route: '/products/transactions',
                     adminOnly: true,
                   },
                   // {
-                  //   label: 'Delete Product',
-                  //   route: '/products/delete',
+                  //   label: 'Detalhes de Product',
+                  //   route: '/products/transactions',
                   //   adminOnly: true,
                   // },
                 ]

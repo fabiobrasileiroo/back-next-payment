@@ -1,6 +1,9 @@
 import 'dotenv/config'
 import type { PaymentData } from '../@types/PaymentData'
 import { isProduction, payment } from '../config/mercadoPagoConfig'
+import { PrismaClient } from '@prisma/client'
+
+const prisma = new PrismaClient()
 
 // Obtain the correct webHookURL based on environment
 export const webHookURL: string = isProduction
@@ -34,4 +37,14 @@ export const createPayment = async (paymentData: PaymentData) => {
     }
     throw new Error(`Error creating payment: ${(error as Error).message}`)
   }
+}
+
+
+export const getPayments = async () => {
+  return prisma.payment.findMany({
+    // include: {
+    //   // company: true,
+    //   // category: true,
+    // },
+  })
 }
