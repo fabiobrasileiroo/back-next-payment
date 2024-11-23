@@ -155,22 +155,22 @@ const getMenuForRole = (role: any) => {
             // Admin-only routes
             ...(role === UserRole.ADMIN
               ? [
-                  {
-                    label: 'Gerenciamento de produtos',
-                    route: '/products/add',
-                    adminOnly: true,
-                  },
-                  {
-                    label: 'Pagamentos',
-                    route: '/products/transactions',
-                    adminOnly: true,
-                  },
-                  // {
-                  //   label: 'Detalhes de Product',
-                  //   route: '/products/transactions',
-                  //   adminOnly: true,
-                  // },
-                ]
+                {
+                  label: 'Gerenciamento de produtos',
+                  route: '/products/add',
+                  adminOnly: true,
+                },
+                {
+                  label: 'Pagamentos',
+                  route: '/products/transactions',
+                  adminOnly: true,
+                },
+                // {
+                //   label: 'Detalhes de Product',
+                //   route: '/products/transactions',
+                //   adminOnly: true,
+                // },
+              ]
               : []),
           ],
         },
@@ -196,13 +196,38 @@ const getMenuForRole = (role: any) => {
     },
     {
       group: 'Collaboration',
-      separator: true,
+      separator: false,
       items: [
         {
           icon: 'assets/icons/heroicons/outline/users.svg',
-          label: 'Users',
-          route: '/users',
+          label: 'Gestão',
+          route: '/collaboration',
+          children: [
+            // { label: 'users', route: '/collaboration/users' },
+            // { label: 'Categories', route: '/products/categories' },
+            // Admin-only routes
+            ...(role === UserRole.ADMIN
+              ? [
+                {
+                  label: 'Gerenciamento de usuários',
+                  route: '/collaboration/users',
+                  adminOnly: true,
+                },
+                {
+                  label: 'Gerenciamento de Unidades',
+                  route: '/collaboration/company-unit',
+                  adminOnly: true,
+                },
+                // {
+                //   label: 'Detalhes de Product',
+                //   route: '/products/transactions',
+                //   adminOnly: true,
+                // },
+              ]
+              : []),
+          ],
         },
+
       ],
     },
     {
