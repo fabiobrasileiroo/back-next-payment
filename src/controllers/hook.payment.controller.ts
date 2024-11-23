@@ -8,7 +8,8 @@ const prisma = new PrismaClient()
 
 // Function to validate the webhook signature
 const verifyWebhookSignature = (req: Request): boolean => {
-  // console.log("🚀 ~ verifyWebhookSignature ~ req:", req);
+  console.log('aqui?')
+  console.log("🚀 ~ verifyWebhookSignature ~ req:", req);
 
   const secret = process.env.WEBHOOK_SECRET
   if (!secret) {
@@ -103,6 +104,7 @@ const getPaymentDetails = async (paymentId: string) => {
 
 // Webhook handler
 export const webHook = async (req: Request, res: Response) => {
+  console.log('aqui?1')
   try {
     if (!verifyWebhookSignature(req)) {
       return res.status(403).send('Assinatura inválida')
@@ -216,6 +218,7 @@ const updatePaymentStatus = async (paymentDetails: any) => {
     throw new Error('Erro ao atualizar ou criar pagamento no banco.')
   }
 }
+
 export const checkPaymentStatus = async (req:Request, res: Response) => {
   const paymentId = req.params.paymentId;
   const accessToken = process.env.PROD_ACCESS_TOKEN;

@@ -3,6 +3,7 @@ import cors from 'cors'
 import express from 'express'
 import authRoutes from './routes/authRoutes.js'
 import paymentRoutes from './routes/paymentRoutes.js'
+import paymentStatusHook from './routes/paymentStatus.hook.js'
 import productRoutes from './routes/productRoutes.js'
 import createUserRouter from './routes/createUserRoutes.js'
 import createUnitRouter from './routes/createUnitRoutes.js'
@@ -42,6 +43,7 @@ app.head('/', (req, res) => {
 // Defina as rotas para produtos e pagamentos
 app.use('/api/products', productRoutes)
 app.use('/api/payments', paymentRoutes)
+app.use('/status', paymentStatusHook)
 app.use('/auth', authRoutes) // Adicione '/api' como prefixo para as rotas de autenticação
 app.use('/api', createUserRouter) // Adicione '/api' como prefixo para as rotas de autenticação
 app.use('/api', createUnitRouter) // Adicione '/api' como prefixo para as rotas de autenticação
