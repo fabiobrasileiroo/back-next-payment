@@ -13,7 +13,7 @@ const createUserRouter = express.Router();
 
 // Rota protegida para criar usuários dentro da empresa do administrador
 createUserRouter.post(
-  '/create-user',
+  '/users',
   authenticate,
   authorize(['ADMIN']), // Apenas ADMIN pode criar usuários
   createUserInCompany

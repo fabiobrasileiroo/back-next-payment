@@ -19,6 +19,16 @@ const transporter = nodemailer.createTransport({
 
 // Função para enviar o e-mail com o token de redefinição de senha
 export const forgotPassword = async (req: Request, res: Response) => {
+//   SMTP_HOST=smtp.gmail.com
+// # SMTP_PORT=uqvgwqkijeoclvtn
+// SMTP_USER=fabio.h591@gmail.com
+// SMTP_PASS=kjvfnaxtvzpvfynr 
+
+// SMTP_USER=587
+    console.log(process.env.SMTP_HOST)
+  console.log(process.env.SMTP_PORT)
+  console.log(process.env.SMTP_USER)
+  console.log(process.env.SMTP_PASS)
   const { email } = req.body
 
   try {

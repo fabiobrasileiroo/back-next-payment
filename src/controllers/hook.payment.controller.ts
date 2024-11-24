@@ -163,6 +163,7 @@ const processNotification = async (notification: any) => {
 }
 
 const updatePaymentStatus = async (paymentDetails: any) => {
+  
   try {
     const {
       id: paymentId,
