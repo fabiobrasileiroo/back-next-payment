@@ -13,7 +13,7 @@ const createUnitRouter = express.Router();
 
 // Rota protegida para criar unidades dentro da empresa do administrador
 createUnitRouter.post(
-  '/create-unit',
+  '/units',
   authenticate,
   authorize(['ADMIN']),
   createUnitInCompany
