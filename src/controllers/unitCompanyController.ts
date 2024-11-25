@@ -4,7 +4,8 @@ import type { Request, Response } from 'express'
 const prisma = new PrismaClient()
 
 export const createUnitInCompany = async (req: Request, res: Response) => {
-  const { name } = req.body
+  const { name, pixKey } = req.body
+  console.log(req.body)
 
   // Verificar se o usuário está autenticado
   if (!req.user || !req.user.id) {
@@ -37,6 +38,7 @@ export const createUnitInCompany = async (req: Request, res: Response) => {
     const newUnit = await prisma.unit.create({
       data: {
         name,
+        pixKey,
         company: { connect: { id: adminUser.companyId } }, // Associa a unidade à empresa do administrador
       },
     })
