@@ -237,7 +237,7 @@ const getMenuForRole = (role: any) => {
         {
           icon: 'assets/icons/heroicons/outline/cog.svg',
           label: 'Settings',
-          route: '/settings',
+          route: '/settings/profile',
         },
       ],
     },

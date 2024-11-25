@@ -9,6 +9,7 @@ import createUserRouter from './routes/createUserRoutes.js'
 import createUnitRouter from './routes/createUnitRoutes.js'
 import proposalRoutes from './routes/proposalRoutes.js'
 import validateToken from './routes/validateToken.js'
+import settingsRoutes from './routes/settingsRoutes.js'
 
 const app = express()
 
@@ -47,6 +48,7 @@ app.use('/status', paymentStatusHook)
 app.use('/auth', authRoutes) // Adicione '/api' como prefixo para as rotas de autenticação
 app.use('/api', createUserRouter) // Adicione '/api' como prefixo para as rotas de autenticação
 app.use('/api', createUnitRouter) // Adicione '/api' como prefixo para as rotas de autenticação
+app.use('/settings', settingsRoutes ) // Adicione '/api' como prefixo para as rotas de autenticação
 app.use('/proposal', proposalRoutes) // Adicione '/api' como prefixo para as rotas de autenticação
 app.use('/auth', validateToken) // Adicione '/api' como prefixo para as rotas de autenticação
 app.use('/all', publicRouter) // Adicione '/api' como prefixo para as rotas de autenticação
