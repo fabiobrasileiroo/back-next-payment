@@ -20,11 +20,11 @@ https://github.com/user-attachments/assets/c0a2017f-23d8-4376-a638-1cc6e02ae552
 - [x] RF04: Implementar atualização de produto.
 - [x] RF05: Implementar deleção de produto.
 - [x] RF06: Implementar pagamento via PIX.
-- [ ] RF07: Implementar verificação de status de pagamento.
+- [x] RF07: Implementar verificação de status de pagamento.
 - [ ] RF08: Implementar funcionalidade de reembolso.
 - [ ] RF09: Implementar envio de e-mail para cliente após pagamento.
-- [ ] RF10: Implementar relatório de transações.
-- [ ] RF11: Implementar relatório de produtos vendidos.
+- [x] RF10: Implementar relatório de transações.
+- [x] RF11: Implementar relatório de produtos vendidos.
 - [x] RF12: Implementar autenticação JWT para operações seguras.
 - [x] RF13: Implementar registro de novos usuários.
 - [x] RF14: Implementar controle de permissões por nível de usuário.
@@ -34,7 +34,7 @@ https://github.com/user-attachments/assets/c0a2017f-23d8-4376-a638-1cc6e02ae552
 ## RNs (Regras de negócio)
 > obs: descreve um aspecto do negócio, definindo ou restringindo tanto sua estrutura quanto seu comportamento
 
-- [ ] RN01: Pagamento via PIX deve ser concluído em 30 minutos.
+- [x] RN01: Pagamento via PIX deve ser concluído em 5 minutos.
 - [ ] RN02: Produtos com pagamentos pendentes não podem ser deletados.
 - [ ] RN03: Pagamentos só podem ser feitos para produtos com estoque disponível.
 - [x] RN04: Valor mínimo para transações é R$ 1,00.
